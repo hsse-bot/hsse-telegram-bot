@@ -11,6 +11,6 @@ class RolesRepository(ABC):
     def get_role(self, role_id: int):
         raise NotImplementedError()
     
-    def get_all_roles(self) -> RoleData:
+    def get_all_roles(self) -> list[RoleData]:
         raise NotImplementedError()
     
