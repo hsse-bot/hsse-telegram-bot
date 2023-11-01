@@ -3,9 +3,39 @@ from flask import Flask
 app = Flask(__name__)
 
 
-@app.route('/')
-def hello_world():  # put application's code here
-    return 'Hello World!'
+@app.post("/create-user")
+def create_user():
+    raise NotImplementedError()
+
+
+@app.get("/get-user")
+def get_user():
+    raise NotImplementedError()
+
+
+@app.get("/get-all-users")
+def get_all_users():
+    raise NotImplementedError()
+
+
+@app.put("/update-user")
+def update_user():
+    raise NotImplementedError()
+
+
+@app.delete("/delete-user")
+def delete_user():
+    raise NotImplementedError()
+
+
+@app.get("/get-role")
+def get_role():
+    raise NotImplementedError()
+
+
+@app.get("/get-roles")
+def get_roles():
+    raise NotImplementedError()
 
 
 if __name__ == '__main__':
