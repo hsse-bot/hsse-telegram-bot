@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional
 
+from data.common.RoleData import RoleData
+
 
 @dataclass
 class UserData:
@@ -8,6 +10,6 @@ class UserData:
     surname: str
     tg_id: str
     role: RoleData
-    student_info: Optional[RoleData]
+    student_info: Optional[StudentInfo]
     score: int
     
