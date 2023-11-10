@@ -1,7 +1,7 @@
 using TelegramNotifierService.Data.Database.Entities;
 using TelegramNotifierService.Data.Repositories;
 
-namespace TelegramNotifierService.Services;
+namespace TelegramNotifierService.Services.Data;
 
 public class SubscriptionsManager : ISubscriptionsManager
 {
