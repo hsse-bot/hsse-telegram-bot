@@ -15,7 +15,7 @@ public class TelegramBulkMessager : ITelegramBulkMessager
         _tgClient = tgClient;
     }
     
-    public Task SendBulkMessage(IEnumerable<long> consumersIds,
+    public Task SendBulkMessageAsync(IEnumerable<long> consumersIds,
         string messageContent,
         CancellationToken cancellationToken)
     {
