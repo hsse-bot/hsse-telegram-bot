@@ -5,19 +5,19 @@ namespace TelegramNotifierService.Services.Notifying;
 
 public class TelegramNotifier : INotifier
 {
-    private readonly ITelegramBulkMessager _messager;
+    private readonly ITelegramBulkMessagingHelper _messagingHelper;
     private readonly ISubscriptionsManager _subscriptionsManager;
 
-    public TelegramNotifier(ITelegramBulkMessager messager,
+    public TelegramNotifier(ITelegramBulkMessagingHelper messagingHelper,
         ISubscriptionsManager subscriptionsManager)
     {
-        _messager = messager;
+        _messagingHelper = messagingHelper;
         _subscriptionsManager = subscriptionsManager;
     }
     
     public async Task NotifyAllBySubscriptionAsync(long subTypeId, string messageContent, CancellationToken cancellationToken)
     {
         var allByCategory = await _subscriptionsManager.GetAllSubscriptionsByTypeAsync(subTypeId);
-        await _messager.SendBulkMessageAsync(allByCategory.Select(x => x.Id), messageContent, cancellationToken);
+        await _messagingHelper.SendBulkMessageAsync(allByCategory.Select(x => x.Id), messageContent, cancellationToken);
     }
 }

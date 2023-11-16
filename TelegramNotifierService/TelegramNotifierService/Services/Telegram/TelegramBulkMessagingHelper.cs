@@ -4,13 +4,13 @@ using TelegramNotifierService.Services.Telegram.Entities;
 
 namespace TelegramNotifierService.Services.Telegram;
 
-public class TelegramBulkMessager : ITelegramBulkMessager
+public class TelegramBulkMessagingHelper : ITelegramBulkMessagingHelper
 {
-    private const int REQUESTS_DELAY = 100;
+    private const int RequestsDelay = 100;
     
     private readonly HttpClient _tgClient;
     
-    public TelegramBulkMessager(HttpClient tgClient)
+    public TelegramBulkMessagingHelper(HttpClient tgClient)
     {
         _tgClient = tgClient;
     }
@@ -20,7 +20,7 @@ public class TelegramBulkMessager : ITelegramBulkMessager
         CancellationToken cancellationToken)
     {
         var consumersIdsArray = consumersIds as long[] ?? consumersIds.ToArray();
-        Task[] tasks = new Task[consumersIdsArray.Length];
+        var tasks = new Task[consumersIdsArray.Length];
         
         for (var i = 0; i < consumersIdsArray.Length; i++)
         {
@@ -47,8 +47,8 @@ public class TelegramBulkMessager : ITelegramBulkMessager
         {
             while (!response.IsSuccessStatusCode && !cancellationToken.IsCancellationRequested)
             {
-                response = await _tgClient.PostAsJsonAsync("/sendMessage", msg);
-                await Task.Delay(REQUESTS_DELAY, cancellationToken);
+                response = await _tgClient.PostAsJsonAsync("/sendMessage", msg, cancellationToken: cancellationToken);
+                await Task.Delay(RequestsDelay, cancellationToken);
             }
         }
     }

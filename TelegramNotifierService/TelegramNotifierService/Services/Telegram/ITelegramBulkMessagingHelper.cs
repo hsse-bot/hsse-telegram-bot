@@ -1,6 +1,6 @@
 namespace TelegramNotifierService.Services.Telegram;
 
-public interface ITelegramBulkMessager
+public interface ITelegramBulkMessagingHelper
 {
     Task SendBulkMessageAsync(IEnumerable<long> consumersIds, string messageContent, CancellationToken cancellationToken);
 }
