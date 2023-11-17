@@ -5,6 +5,7 @@ using TelegramNotifierService.Services.Notifying;
 namespace TelegramNotifierService.Controllers;
 
 [Route("messaging")]
+[Produces("application/json")]
 [ApiController]
 public class MessagingController : ControllerBase
 {
