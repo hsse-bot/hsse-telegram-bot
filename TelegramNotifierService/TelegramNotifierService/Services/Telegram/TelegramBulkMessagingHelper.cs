@@ -7,6 +7,7 @@ namespace TelegramNotifierService.Services.Telegram;
 public class TelegramBulkMessagingHelper : ITelegramBulkMessagingHelper
 {
     private const int RequestsDelay = 100;
+    private const string SendMessageApiMethodRoute = "/sendMessage";
     
     private readonly HttpClient _tgClient;
     
@@ -41,13 +42,13 @@ public class TelegramBulkMessagingHelper : ITelegramBulkMessagingHelper
         
         using var content = new StreamContent(memStream);
         
-        var response = await _tgClient.PostAsync("/sendMessage", content, cancellationToken);
+        var response = await _tgClient.PostAsync(SendMessageApiMethodRoute, content, cancellationToken);
 
         if (response.StatusCode == HttpStatusCode.TooManyRequests)
         {
             while (!response.IsSuccessStatusCode && !cancellationToken.IsCancellationRequested)
             {
-                response = await _tgClient.PostAsJsonAsync("/sendMessage", msg, cancellationToken: cancellationToken);
+                response = await _tgClient.PostAsJsonAsync(SendMessageApiMethodRoute, msg, cancellationToken: cancellationToken);
                 await Task.Delay(RequestsDelay, cancellationToken);
             }
         }
