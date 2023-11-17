@@ -1,5 +1,6 @@
 using TelegramNotifierService.Data.Database.Entities;
 using TelegramNotifierService.Data.Repositories;
+using TelegramNotifierService.Exceptions;
 
 namespace TelegramNotifierService.Services.Data;
 
@@ -42,9 +43,11 @@ public class SubscriptionsManager : ISubscriptionsManager
         return Task.FromResult(_subscriptionsRepository.GetAll().Where(x => x.ConsumerId == consumerId));
     }
 
-    public Task<IEnumerable<Subscription>> GetAllSubscriptionsByTypeAsync(long subTypeId)
+    public async Task<IEnumerable<Subscription>> GetAllSubscriptionsByTypeAsync(long subTypeId)
     {
-        return Task.FromResult(_subscriptionsRepository.GetAll().Where(x => x.TypeId == subTypeId));
+        var type = await FindSubTypeAsync(subTypeId);
+
+        return type.Subscriptions;
     }
 
     public async Task<Subscription> SubscribeUserAsync(long consumerId, long subTypeId)
@@ -69,5 +72,17 @@ public class SubscriptionsManager : ISubscriptionsManager
         });
 
         await _subscriptionsRepository.SaveChangesAsync();
+    }
+
+    private async Task<SubscriptionType> FindSubTypeAsync(long subTypeId)
+    {
+        var type = await _subscriptionTypesRepository.FindAsync(subTypeId);
+
+        if (type == null)
+        {
+            throw new CategoryNotFoundException();
+        }
+
+        return type;
     }
 }
