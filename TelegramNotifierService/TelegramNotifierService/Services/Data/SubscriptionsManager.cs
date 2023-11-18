@@ -1,40 +1,65 @@
 using TelegramNotifierService.Data.Database.Entities;
 using TelegramNotifierService.Data.Repositories;
+using TelegramNotifierService.Exceptions;
 
 namespace TelegramNotifierService.Services.Data;
 
 public class SubscriptionsManager : ISubscriptionsManager
 {
     private readonly ISubscriptionsRepository _subscriptionsRepository;
-    private readonly ISubscriptionTypesRepository _subscriptionTypesRepository;
+    private readonly ICategoriesRepository _categoriesRepository;
 
     public SubscriptionsManager(ISubscriptionsRepository subscriptionsRepository,
-        ISubscriptionTypesRepository subscriptionTypesRepository)
+        ICategoriesRepository categoriesRepository)
     {
         _subscriptionsRepository = subscriptionsRepository;
-        _subscriptionTypesRepository = subscriptionTypesRepository;
+        _categoriesRepository = categoriesRepository;
     }
     
-    public async Task<SubscriptionType> CreateSubscriptionTypeAsync(string subscriptionName)
+    public async Task<SubscriptionCategory> CreateCategoryAsync(string subscriptionName)
     {
-        var subType = new SubscriptionType
+        var subType = new SubscriptionCategory
         {
             Name = subscriptionName
         };
         
-        await _subscriptionTypesRepository.AddAsync(subType);
-        await _subscriptionTypesRepository.SaveChangesAsync();
+        await _categoriesRepository.AddAsync(subType);
+        await _categoriesRepository.SaveChangesAsync();
         return subType;
     }
-
-    public async Task DeleteSubscriptionTypeAsync(long subTypeId)
+    
+    public async Task<SubscriptionCategory> GetCategoryAsync(long id)
     {
-        _subscriptionTypesRepository.Remove(new SubscriptionType
-        {
-            Id = subTypeId
-        });
+        var result = await _categoriesRepository.FindAsync(id);
 
-        await _subscriptionsRepository.SaveChangesAsync();
+        if (result == null)
+        {
+            throw new CategoryNotFoundException();
+        }
+
+        return result;
+    }
+    
+    public Task<IEnumerable<SubscriptionCategory>> GetCategoriesAsync()
+    {
+        return Task.FromResult(_categoriesRepository.GetAll());
+    }
+
+    public async Task DeleteCategoryAsync(long id)
+    {
+        try
+        {
+            _categoriesRepository.Remove(new SubscriptionCategory()
+            {
+                Id = id
+            });
+
+            await _categoriesRepository.SaveChangesAsync();
+        }
+        catch (Exception)
+        {
+            throw new CategoryNotFoundException();
+        }
     }
 
     public Task<IEnumerable<Subscription>> GetAllSubscriptionsByConsumerAsync(long consumerId)
@@ -42,9 +67,11 @@ public class SubscriptionsManager : ISubscriptionsManager
         return Task.FromResult(_subscriptionsRepository.GetAll().Where(x => x.ConsumerId == consumerId));
     }
 
-    public Task<IEnumerable<Subscription>> GetAllSubscriptionsByTypeAsync(long subTypeId)
+    public async Task<IEnumerable<Subscription>> GetAllSubscriptionsByCategoryAsync(long subTypeId)
     {
-        return Task.FromResult(_subscriptionsRepository.GetAll().Where(x => x.TypeId == subTypeId));
+        var type = await FindSubTypeAsync(subTypeId);
+
+        return type.Subscriptions;
     }
 
     public async Task<Subscription> SubscribeUserAsync(long consumerId, long subTypeId)
@@ -52,7 +79,7 @@ public class SubscriptionsManager : ISubscriptionsManager
         var sub = new Subscription
         {
             ConsumerId = consumerId,
-            TypeId = subTypeId
+            CategoryId = subTypeId
         };
 
         await _subscriptionsRepository.AddAsync(sub);
@@ -65,9 +92,21 @@ public class SubscriptionsManager : ISubscriptionsManager
         _subscriptionsRepository.Remove(new Subscription
         {
             ConsumerId = consumerId,
-            TypeId = subTypeId
+            CategoryId = subTypeId
         });
 
         await _subscriptionsRepository.SaveChangesAsync();
+    }
+
+    private async Task<SubscriptionCategory> FindSubTypeAsync(long subTypeId)
+    {
+        var type = await _categoriesRepository.FindAsync(subTypeId);
+
+        if (type == null)
+        {
+            throw new CategoryNotFoundException();
+        }
+
+        return type;
     }
 }

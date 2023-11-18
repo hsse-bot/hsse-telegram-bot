@@ -2,5 +2,5 @@ namespace TelegramNotifierService.Services.Notifying;
 
 public interface INotifier
 {
-    Task NotifyAllBySubscriptionAsync(long subTypeId, string messageContent, CancellationToken cancellationToken);
+    Task NotifyAllBySubscriptionAsync(long categoryId, string messageContent, CancellationToken cancellationToken);
 }

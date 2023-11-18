@@ -15,9 +15,9 @@ public class TelegramNotifier : INotifier
         _subscriptionsManager = subscriptionsManager;
     }
     
-    public async Task NotifyAllBySubscriptionAsync(long subTypeId, string messageContent, CancellationToken cancellationToken)
+    public async Task NotifyAllBySubscriptionAsync(long categoryId, string messageContent, CancellationToken cancellationToken)
     {
-        var allByCategory = await _subscriptionsManager.GetAllSubscriptionsByTypeAsync(subTypeId);
+        var allByCategory = await _subscriptionsManager.GetAllSubscriptionsByCategoryAsync(categoryId);
         await _messagingHelper.SendBulkMessageAsync(allByCategory.Select(x => x.Id), messageContent, cancellationToken);
     }
 }

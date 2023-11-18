@@ -6,7 +6,7 @@ public partial class Subscription
 
     public long ConsumerId { get; set; }
 
-    public long TypeId { get; set; }
+    public long CategoryId { get; set; }
 
-    public virtual SubscriptionType Type { get; set; } = null!;
+    public virtual SubscriptionCategory Category { get; set; } = null!;
 }
