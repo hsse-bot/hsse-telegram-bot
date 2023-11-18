@@ -16,9 +16,9 @@ public class SubscriptionsManager : ISubscriptionsManager
         _subscriptionTypesRepository = subscriptionTypesRepository;
     }
     
-    public async Task<SubscriptionType> CreateSubscriptionTypeAsync(string subscriptionName)
+    public async Task<SubscriptionCategory> CreateSubscriptionTypeAsync(string subscriptionName)
     {
-        var subType = new SubscriptionType
+        var subType = new SubscriptionCategory
         {
             Name = subscriptionName
         };
@@ -30,7 +30,7 @@ public class SubscriptionsManager : ISubscriptionsManager
 
     public async Task DeleteSubscriptionTypeAsync(long subTypeId)
     {
-        _subscriptionTypesRepository.Remove(new SubscriptionType
+        _subscriptionTypesRepository.Remove(new SubscriptionCategory
         {
             Id = subTypeId
         });
@@ -43,7 +43,7 @@ public class SubscriptionsManager : ISubscriptionsManager
         return Task.FromResult(_subscriptionsRepository.GetAll().Where(x => x.ConsumerId == consumerId));
     }
 
-    public async Task<IEnumerable<Subscription>> GetAllSubscriptionsByTypeAsync(long subTypeId)
+    public async Task<IEnumerable<Subscription>> GetAllSubscriptionsByCategoryAsync(long subTypeId)
     {
         var type = await FindSubTypeAsync(subTypeId);
 
@@ -55,7 +55,7 @@ public class SubscriptionsManager : ISubscriptionsManager
         var sub = new Subscription
         {
             ConsumerId = consumerId,
-            TypeId = subTypeId
+            CategoryId = subTypeId
         };
 
         await _subscriptionsRepository.AddAsync(sub);
@@ -68,13 +68,13 @@ public class SubscriptionsManager : ISubscriptionsManager
         _subscriptionsRepository.Remove(new Subscription
         {
             ConsumerId = consumerId,
-            TypeId = subTypeId
+            CategoryId = subTypeId
         });
 
         await _subscriptionsRepository.SaveChangesAsync();
     }
 
-    private async Task<SubscriptionType> FindSubTypeAsync(long subTypeId)
+    private async Task<SubscriptionCategory> FindSubTypeAsync(long subTypeId)
     {
         var type = await _subscriptionTypesRepository.FindAsync(subTypeId);
 

@@ -1,6 +1,6 @@
 ﻿namespace TelegramNotifierService.Data.Database.Entities;
 
-public partial class SubscriptionType
+public partial class SubscriptionCategory
 {
     public long Id { get; set; }
 

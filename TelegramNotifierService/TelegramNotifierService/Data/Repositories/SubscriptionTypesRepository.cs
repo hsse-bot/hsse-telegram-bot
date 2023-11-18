@@ -12,19 +12,19 @@ public class SubscriptionTypesRepository : ISubscriptionTypesRepository
         _dbContext = dbContext;
     }
 
-    public IEnumerable<SubscriptionType> GetAll() => 
-        _dbContext.SubscriptionTypes;
+    public IEnumerable<SubscriptionCategory> GetAll() => 
+        _dbContext.Categories;
 
-    public Task<SubscriptionType?> FindAsync(long id) =>
-        _dbContext.SubscriptionTypes.FindAsync(id).AsTask();
+    public Task<SubscriptionCategory?> FindAsync(long id) =>
+        _dbContext.Categories.FindAsync(id).AsTask();
 
-    public async Task AddAsync(SubscriptionType subscription)
+    public async Task AddAsync(SubscriptionCategory subscription)
     {
         await _dbContext.AddAsync(subscription);
     }
 
-    public void Remove(SubscriptionType subscription) => 
-        _dbContext.SubscriptionTypes.Remove(subscription);
+    public void Remove(SubscriptionCategory subscription) => 
+        _dbContext.Categories.Remove(subscription);
 
     public async Task SaveChangesAsync()
     {

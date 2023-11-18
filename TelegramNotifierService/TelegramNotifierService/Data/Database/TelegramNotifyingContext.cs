@@ -16,7 +16,7 @@ public partial class TelegramNotifyingContext : DbContext
 
     public virtual DbSet<Subscription> Subscriptions { get; set; }
 
-    public virtual DbSet<SubscriptionType> SubscriptionTypes { get; set; }
+    public virtual DbSet<SubscriptionCategory> Categories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,23 +30,23 @@ public partial class TelegramNotifyingContext : DbContext
 
             entity.ToTable("subscriptions");
 
-            entity.HasIndex(e => e.TypeId, "type_id");
+            entity.HasIndex(e => e.CategoryId, "category_id");
 
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.ConsumerId).HasColumnName("consumer_id");
-            entity.Property(e => e.TypeId).HasColumnName("type_id");
+            entity.Property(e => e.CategoryId).HasColumnName("category_id");
 
-            entity.HasOne(d => d.Type).WithMany(p => p.Subscriptions)
-                .HasForeignKey(d => d.TypeId)
+            entity.HasOne(d => d.Category).WithMany(p => p.Subscriptions)
+                .HasForeignKey(d => d.CategoryId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("subscriptions_ibfk_1");
         });
 
-        modelBuilder.Entity<SubscriptionType>(entity =>
+        modelBuilder.Entity<SubscriptionCategory>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
-            entity.ToTable("subscription_types");
+            entity.ToTable("categories");
 
             entity.HasIndex(e => e.Name, "name").IsUnique();
 
