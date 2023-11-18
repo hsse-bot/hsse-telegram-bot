@@ -2,7 +2,7 @@ using TelegramNotifierService.Data.Database.Entities;
 
 namespace TelegramNotifierService.Data.Repositories;
 
-public interface ISubscriptionTypesRepository
+public interface ICategoriesRepository
 {
     /// <summary>
     /// Получает все типы подписок

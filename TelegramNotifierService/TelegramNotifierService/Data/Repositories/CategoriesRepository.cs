@@ -3,11 +3,11 @@ using TelegramNotifierService.Data.Database.Entities;
 
 namespace TelegramNotifierService.Data.Repositories;
 
-public class SubscriptionTypesRepository : ISubscriptionTypesRepository
+public class CategoriesRepository : ICategoriesRepository
 {
     private readonly TelegramNotifyingContext _dbContext;
     
-    public SubscriptionTypesRepository(TelegramNotifyingContext dbContext)
+    public CategoriesRepository(TelegramNotifyingContext dbContext)
     {
         _dbContext = dbContext;
     }
