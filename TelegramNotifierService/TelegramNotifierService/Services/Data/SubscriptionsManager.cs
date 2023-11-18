@@ -62,16 +62,6 @@ public class SubscriptionsManager : ISubscriptionsManager
         }
     }
 
-    public async Task DeleteSubscriptionTypeAsync(long subTypeId)
-    {
-        _categoriesRepository.Remove(new SubscriptionCategory
-        {
-            Id = subTypeId
-        });
-
-        await _subscriptionsRepository.SaveChangesAsync();
-    }
-
     public Task<IEnumerable<Subscription>> GetAllSubscriptionsByConsumerAsync(long consumerId)
     {
         return Task.FromResult(_subscriptionsRepository.GetAll().Where(x => x.ConsumerId == consumerId));
