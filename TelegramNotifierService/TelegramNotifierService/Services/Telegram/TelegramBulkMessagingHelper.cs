@@ -11,9 +11,9 @@ public class TelegramBulkMessagingHelper : ITelegramBulkMessagingHelper
     
     private readonly HttpClient _tgClient;
     
-    public TelegramBulkMessagingHelper(HttpClient tgClient)
+    public TelegramBulkMessagingHelper(IHttpClientFactory clientFactory)
     {
-        _tgClient = tgClient;
+        _tgClient = clientFactory.CreateClient("TelegramApiClient");
     }
     
     public Task SendBulkMessageAsync(IEnumerable<long> consumersIds,
