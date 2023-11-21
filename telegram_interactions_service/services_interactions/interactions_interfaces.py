@@ -1,11 +1,11 @@
 from abc import ABC, abstractmethod
 from typing import NoReturn, List
-from ..misc.dataclasses import User, Form, Role, UserDelta, FormTicket, MaterialHelpTicket, NotifyCategory
+from ..misc.dataclasses import User, Form, Role, UserDelta, FormTicket, MaterialHelpTicket, NotifyCategory, InputUserData
 
 
 class UserManagingServiceInteractionInterface(ABC):
     @abstractmethod
-    def add_user_to_database(self, user: User) -> NoReturn:
+    def add_user_to_database(self, user: InputUserData) -> NoReturn:
         pass
 
     @abstractmethod
@@ -17,7 +17,7 @@ class UserManagingServiceInteractionInterface(ABC):
         pass
 
     @abstractmethod
-    def get_score(self, user: User) -> int:
+    def get_score(self, user: User) -> int | None:
         pass
 
     @abstractmethod
@@ -25,11 +25,15 @@ class UserManagingServiceInteractionInterface(ABC):
         pass
 
     @abstractmethod
-    def get_top_scores(self) -> List[User]:
+    def get_top_scores(self) -> List[User] | None:
         pass
 
     @abstractmethod
-    def get_user_role(self, user: User) -> Role:
+    def get_user_role(self, user: User) -> Role | None:
+        pass
+
+    @abstractmethod
+    def get_user(self, tg_id: int) -> User | None:
         pass
 
 
