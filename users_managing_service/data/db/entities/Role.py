@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Mapped
 from sqlalchemy.orm import mapped_column
 from users_managing_service.data.db import Base
+from sqlalchemy import String
 
 
 class Role(Base):
