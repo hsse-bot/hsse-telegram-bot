@@ -1,9 +1,7 @@
-from sqlalchemy import BigInteger, PickleType
-from material_help_service.data.db.Base import Base
+from dataclasses import dataclass
 
 
-class AttachmentData(Base):
-    __tablename__ = "attachment_data"
-
-    id: BigInteger
-    data: PickleType
+@dataclass
+class AttachmentData:
+    id: int
+    download_link: str
