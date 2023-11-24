@@ -6,8 +6,9 @@ from dataclasses import dataclass
 @dataclass
 class TicketData:
     id: int
-    author_th_id: int
+    author_tg_id: int
     created_at: int
+    status: int
     review_message: str
     ticket_text: str
     attachments: List[AttachmentData]

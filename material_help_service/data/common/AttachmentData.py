@@ -4,4 +4,5 @@ from dataclasses import dataclass
 @dataclass
 class AttachmentData:
     id: int
-    download_link: str
+    mime_type: str
+    source: str
