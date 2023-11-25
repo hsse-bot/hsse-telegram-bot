@@ -1,6 +1,7 @@
-from material_help_service.data.db.entities.Ticket import Ticket
+import abc
 
 
-class BaseTicketBuilder:
-    def build(self) -> Ticket:
+class BaseTicketBuilder(abc.ABC):
+    @abc.abstractmethod
+    def build(self):
         pass

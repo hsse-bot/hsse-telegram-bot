@@ -7,25 +7,33 @@ from material_help_service.helpers.BaseTicketBuilder import BaseTicketBuilder
 
 
 class TicketBuilder(BaseTicketBuilder):
-    created_at: datetime
-    attachment: TicketAttachment
-    author_tg_id: int
-    text: str
-    attachments: List[TicketAttachment]
+
+    def __init__(self):
+        self.author_tg_id_: int = 0
+        self.created_at_ = None
+        self.text_: str = ""
+        self.attachments_: List[TicketAttachment] = []
 
     def with_author(self, tg_id: int):
-        self.author_tg_id = tg_id
+        self.author_tg_id_ = tg_id
+        return self
 
     def with_timestamp(self, time: datetime):
-        self.created_at = time
+        self.created_at_ = time
+        return self
 
     def with_text(self, txt: str):
-        self.text = txt
+        self.text_ = txt
+        return self
 
     def with_attachment(self, mime_type: str, path: str):
-        self.attachment.mime_type = mime_type
-        self.attachment.path = path
-        self.attachments.append(self.attachment)
+        self.attachments_.append(TicketAttachment(mime_type=mime_type, path=path))
+        return self
 
     def build(self) -> Ticket:
-        return Ticket(self)
+        ticket = Ticket()
+        ticket.author_tg_id = self.author_tg_id_
+        ticket.created_at = self.created_at_
+        ticket.ticket_text = self.text_
+        ticket.attachments = self.attachments_
+        return ticket
