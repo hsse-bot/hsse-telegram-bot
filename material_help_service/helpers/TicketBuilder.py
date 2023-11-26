@@ -31,8 +31,19 @@ class TicketBuilder(BaseTicketBuilder):
 
     def build(self) -> Ticket:
         ticket = Ticket()
+        if self._author_tg_id == 0:
+            raise Exception('Telegram ID was not given')
         ticket.author_tg_id = self._author_tg_id
+
+        if ticket.created_at is None:
+            raise Exception('Creation time was not given')
         ticket.created_at = self._created_at
+
+        if ticket.ticket_text == "":
+            raise Exception('Ticket text was not given')
         ticket.ticket_text = self._text
+
+        if not ticket.attachments:
+            raise Exception('Attachments were not given')
         ticket.attachments = self._attachments
         return ticket
