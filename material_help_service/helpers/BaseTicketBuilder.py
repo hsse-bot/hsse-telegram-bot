@@ -1,7 +1,7 @@
-import abc
+from abc import ABC, abstractmethod
 
 
-class BaseTicketBuilder(abc.ABC):
-    @abc.abstractmethod
+class BaseTicketBuilder(ABC):
+    @abstractmethod
     def build(self):
         pass
