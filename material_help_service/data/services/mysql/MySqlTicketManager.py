@@ -11,40 +11,51 @@ from sqlalchemy.orm import Session
 
 class MySqlTicketManager(BaseTicketManager):
     _engine = create_engine(os.environ.get("MY_SQL_CONNECTION_STRING"), echo=True)
+    _APPROVED: int = 1
+    _NEED_CHANGES: int = 2
+    _DENIED: int = 3
 
     def create_ticket(self, builder: BaseTicketBuilder) -> Ticket:
         with Session(self._engine) as session:
             ticket = builder.build()
             session.add(ticket)
             session.commit()
-        return ticket
+            return ticket
 
     def edit_ticket(self, ticket_id: int, builder: BaseTicketBuilder) -> NoReturn:
         with Session(self._engine) as session:
             stmt = select(Ticket).where(Ticket.id == ticket_id)
             ticket = session.scalars(stmt).one()
             new_ticket = builder.build()
-            # Все поля поодельности присвоить
+
+            ticket.id = new_ticket.id
+            ticket.author_tg_id = new_ticket.author_tg_id
+            ticket.created_at = new_ticket.created_at
+            ticket.status = new_ticket.status
+            ticket.review_message = new_ticket.review_message
+            ticket.ticket_text = new_ticket.ticket_text
+            ticket.attachments = new_ticket.attachments
+            ticket.is_paper_included = new_ticket.is_paper_included
 
     def approve_ticket(self, ticket_id: int) -> NoReturn:
         with Session(self._engine) as session:
             stmt = select(Ticket).where(Ticket.id == ticket_id)
             ticket = session.scalars(stmt).one()
-            ticket.status = 1
+            ticket.status = self._APPROVED
             session.commit()
 
     def deny_ticket(self, ticket_id: int) -> NoReturn:
         with Session(self._engine) as session:
             stmt = select(Ticket).where(Ticket.id == ticket_id)
             ticket = session.scalars(stmt).one()
-            ticket.status = 3
+            ticket.status = self._DENIED
             session.commit()
 
     def request_changes_for_ticket(self, ticket_id: int, msg: Optional[str]) -> NoReturn:
         with Session(self._engine) as session:
             stmt = select(Ticket).where(Ticket.id == ticket_id)
             ticket = session.scalars(stmt).one()
-            ticket.status = 2
+            ticket.status = self._NEED_CHANGES
             ticket.review_message = msg
             session.commit()
 
@@ -65,8 +76,7 @@ class MySqlTicketManager(BaseTicketManager):
         with Session(self._engine) as session:
             stmt = select(Ticket).where(Ticket.status == is_active, Ticket.author_tg_id == author_id)
             tickets = session.scalars(stmt).all()
-            tickets_list = [x for x in tickets]
-            return tickets_list
+            return [x for x in tickets]
 
     def set_include_paper_status(self, ticket_id: int, is_paper_included: bool) -> NoReturn:
         with Session(self._engine) as session:
