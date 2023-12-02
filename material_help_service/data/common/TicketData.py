@@ -1,5 +1,5 @@
 from typing import List
-from material_help_service.data.common.AttachmentData import AttachmentData
+from data.common.AttachmentData import AttachmentData
 from dataclasses import dataclass
 
 

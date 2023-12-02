@@ -1,8 +1,8 @@
 import os
 from typing import Optional, List, NoReturn
-from material_help_service.data.db.entities.Ticket import Ticket
-from material_help_service.data.services.BaseTicketManager import BaseTicketManager
-from material_help_service.helpers.BaseTicketBuilder import BaseTicketBuilder
+from data.db.entities.Ticket import Ticket
+from data.services.BaseTicketManager import BaseTicketManager
+from helpers.BaseTicketBuilder import BaseTicketBuilder
 
 from sqlalchemy import create_engine
 from sqlalchemy import select

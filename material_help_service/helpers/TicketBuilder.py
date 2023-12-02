@@ -1,9 +1,9 @@
 from datetime import datetime
 from typing import List
 
-from material_help_service.data.db.entities.Ticket import Ticket
-from material_help_service.data.db.entities.TicketAttachment import TicketAttachment
-from material_help_service.helpers.BaseTicketBuilder import BaseTicketBuilder
+from data.db.entities.Ticket import Ticket
+from data.db.entities.TicketAttachment import TicketAttachment
+from helpers.BaseTicketBuilder import BaseTicketBuilder
 
 
 class TicketBuilder(BaseTicketBuilder):

@@ -1,7 +1,7 @@
 from sqlalchemy import BigInteger, String, LargeBinary, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from Ticket import Ticket
-from material_help_service.data.db.Base import Base
+from data.db.Base import Base
 
 
 class TicketAttachment(Base):

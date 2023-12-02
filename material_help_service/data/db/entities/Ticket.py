@@ -3,7 +3,7 @@ from typing import Optional, List
 from sqlalchemy import BigInteger, String, DateTime, SmallInteger
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from TicketAttachment import TicketAttachment
-from material_help_service.data.db.Base import Base
+from data.db.Base import Base
 
 
 class Ticket(Base):

@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 from typing import Optional, List, NoReturn
-from material_help_service.data.db.entities.Ticket import Ticket
-from material_help_service.helpers.BaseTicketBuilder import BaseTicketBuilder
+from data.db.entities.Ticket import Ticket
+from helpers.BaseTicketBuilder import BaseTicketBuilder
 
 
 class BaseTicketManager(ABC):
