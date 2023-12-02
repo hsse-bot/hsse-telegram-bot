@@ -1,0 +1,2 @@
+class AttachmentAlreadyCreatedException(Exception):
+    pass
