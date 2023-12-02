@@ -12,5 +12,5 @@ class BaseAttachmentsManager(ABC):
         pass
     
     @abstractmethod
-    def create(self, attachment_id: int, content: int) -> NoReturn:
+    def create(self, attachment_id: int, content: bytes) -> NoReturn:
         pass
