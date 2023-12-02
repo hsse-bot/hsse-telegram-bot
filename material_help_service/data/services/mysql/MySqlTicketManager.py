@@ -36,6 +36,7 @@ class MySqlTicketManager(BaseTicketManager):
             ticket.ticket_text = new_ticket.ticket_text
             ticket.attachments = new_ticket.attachments
             ticket.is_paper_included = new_ticket.is_paper_included
+            session.commit()
 
     def approve_ticket(self, ticket_id: int) -> NoReturn:
         with Session(self._engine) as session:
