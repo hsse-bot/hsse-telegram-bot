@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TelegramNotifierService;
 using TelegramNotifierService.Data.Database;
 using TelegramNotifierService.Data.Repositories;
+using TelegramNotifierService.Middlewares;
 using TelegramNotifierService.Services.Data;
 using TelegramNotifierService.Services.Notifying;
 using TelegramNotifierService.Services.Telegram;
@@ -46,6 +47,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<LogicalExceptionsHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

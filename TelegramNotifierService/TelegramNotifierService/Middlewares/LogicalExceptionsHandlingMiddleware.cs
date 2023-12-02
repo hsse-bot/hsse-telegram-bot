@@ -5,16 +5,13 @@ namespace TelegramNotifierService.Middlewares;
 
 public class LogicalExceptionsHandlingMiddleware
 {
-    private const int BadRequestStatusCode = 401;
+    private const int BadRequestStatusCode = 400;
     
     private readonly RequestDelegate _next;
-    private readonly ILogger<LogicalExceptionsHandlingMiddleware> _logger;
 
-    public LogicalExceptionsHandlingMiddleware(RequestDelegate next,
-        ILogger<LogicalExceptionsHandlingMiddleware> logger)
+    public LogicalExceptionsHandlingMiddleware(RequestDelegate next)
     {
         _next = next;
-        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
