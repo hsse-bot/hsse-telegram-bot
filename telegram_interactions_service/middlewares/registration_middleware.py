@@ -21,3 +21,4 @@ class IsRegisteredMiddleware(BaseMiddleware):
         user_managing_service = UserManagingServiceInteraction()
         if await user_managing_service.get_user(user_tg_id) is not None:
             return await handler(event, data)
+        await event.answer("Зарегистрируйтесь!")

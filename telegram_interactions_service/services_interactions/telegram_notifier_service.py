@@ -39,7 +39,7 @@ class TelegramNotifierServiceInteraction(TelegramNotifierServiceInteractionInter
 
     async def get_all_categories(self) -> List[NotifyCategory]:
         if DEBUG_MODE:
-            return [NotifyCategory(id=i, name=f'category number {i}') for i in range(10)]
+            return [NotifyCategory(id=i, name=f'category number {i}') for i in range(12)]
         async with aiohttp.ClientSession() as session:
             async with session.get(notify_service_api_url + 'categories') as response:
                 if response.status != 200:

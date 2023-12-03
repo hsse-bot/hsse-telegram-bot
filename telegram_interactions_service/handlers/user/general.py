@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from aiogram import Router
 
-from telegram_interactions_service.middlewares.user_middleware import IsRegisteredMiddleware
+from telegram_interactions_service.middlewares.registration_middleware import IsRegisteredMiddleware
 from telegram_interactions_service.keyboards.inline import user
 
 user_general_router = Router()
