@@ -6,5 +6,5 @@ class BadRegistrationInput(BotException):
     pass
 
 
-class TelegramNotifierServiceError(BotException):
+class EmailAlreadyUsed(BotException):
     pass

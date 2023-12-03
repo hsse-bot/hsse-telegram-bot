@@ -1,12 +1,13 @@
 from abc import ABC, abstractmethod
 from typing import NoReturn, List
 from ..misc.dataclasses import User, Form, Role, UserDelta, FormTicket, MaterialHelpTicket, NotifyCategory, \
-    InputUserData
+    RegistrationUserData
+
 
 
 class UserManagingServiceInteractionInterface(ABC):
     @abstractmethod
-    async def add_user_to_database(self, user: InputUserData) -> NoReturn:
+    async def add_user_to_database(self, user: RegistrationUserData) -> NoReturn:
         pass
 
     @abstractmethod
@@ -35,6 +36,10 @@ class UserManagingServiceInteractionInterface(ABC):
 
     @abstractmethod
     async def get_user(self, tg_id: int) -> User | None:
+        pass
+
+    @abstractmethod
+    def is_admin(self, tg_id: int) -> bool:
         pass
 
 

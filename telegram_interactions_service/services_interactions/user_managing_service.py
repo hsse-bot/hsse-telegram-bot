@@ -1,11 +1,11 @@
 import aiohttp
 from telegram_interactions_service.services_interactions import interactions_interfaces
 from typing import NoReturn, List
-from ..misc.dataclasses import User, Form, Role, UserDelta, FormTicket, InputUserData
+from ..misc.dataclasses import User, Form, Role, UserDelta, FormTicket, RegistrationUserData
 
 
 class UserManagingServiceInteraction(interactions_interfaces.UserManagingServiceInteractionInterface):
-    async def add_user_to_database(self, user: InputUserData) -> NoReturn:
+    async def add_user_to_database(self, user: RegistrationUserData) -> NoReturn:
         pass
 
     async def set_user_role(self, user: User, new_role: Role) -> NoReturn:
@@ -28,3 +28,6 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
 
     async def get_user(self, tg_id: int) -> User | None:
         pass
+
+    def is_admin(self, tg_id) -> bool:
+        return True
