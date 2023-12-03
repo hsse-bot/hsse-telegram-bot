@@ -28,11 +28,10 @@ def material_help_paginator(page: int = 0) -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
-admin_material_help_menu_kb = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Заявки на матпомощь",
-                                 callback_data=MaterialHelpMenuKb(action="/tickets").pack()),
-        ]
-    ]
-)
+def admin_material_help_menu_kb() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="Заявки на матпомощь", callback_data=MaterialHelpMenuKb(action="/tickets").pack()),
+        width=1
+    )
+    return builder.as_markup()

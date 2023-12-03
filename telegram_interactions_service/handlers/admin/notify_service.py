@@ -3,7 +3,7 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram import Router
-from telegram_interactions_service.states.notify_service_states import NotifySendTextForm
+from telegram_interactions_service.states.notify_service_states import NotifySendTextForm, CreateCategoryForm
 from telegram_interactions_service.misc import dataclasses, constants
 from telegram_interactions_service.middlewares.admin_middleware import IsAdminMiddleware
 from telegram_interactions_service.keyboards.inline import admin
@@ -11,9 +11,14 @@ from telegram_interactions_service.keyboards.inline import admin
 notify_service_router = Router()
 
 
-@notify_service_router.message(Command("notify_service"))
+@notify_service_router.message(Command("notify_service_admin"))
 async def cmd_notify_service(message: Message):
-    await message.answer("Меню сервиса уведомлений", reply_markup=admin.admin_notify_service_menu_kb)
+    await message.answer("Меню сервиса уведомлений", reply_markup=admin.admin_notify_service_menu_kb())
+
+
+@notify_service_router.callback_query(admin.NotifyServiceMenuKb.filter(F.action == "/"))
+async def call_categories_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoriesKb):
+    await callback.message.edit_text("Меню сервиса уведомлений", reply_markup=admin.admin_notify_service_menu_kb())
 
 
 @notify_service_router.callback_query(admin.NotifyCategoriesKb.filter(F.action == "/"))
@@ -38,7 +43,7 @@ async def call_categories_pagination_handler(callback: CallbackQuery, callback_d
     elif callback_data.action == "/prev":
         if cur_page == 0:
             await callback.message.edit_text("Меню сервиса уведомлений",
-                                             reply_markup=admin.admin_notify_service_menu_kb)
+                                             reply_markup=admin.admin_notify_service_menu_kb())
             await callback.answer()
             return
         next_categories_page = cur_page - 1
@@ -51,7 +56,7 @@ async def call_categories_pagination_handler(callback: CallbackQuery, callback_d
 async def call_category_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoriesKb):
     category_id = int(callback_data.action[4:])
     await callback.message.edit_text(f"Категория номер {category_id}",
-                                     reply_markup=admin.admin_notify_category(category_id, callback_data.page))
+                                     reply_markup=admin.admin_notify_category_kb(category_id, callback_data.page))
     await callback.answer()
 
 
@@ -64,21 +69,36 @@ async def call_send_text_handler(callback: CallbackQuery, callback_data: admin.N
     await callback.answer()
 
 
-@notify_service_router.callback_query(admin.NotifyCategoryKb.filter(F.action.endswith("/delete")))
-async def call_delete_category_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoryKb):
-    category_id = callback_data.category_id
-    # request to api to delete category
-    await callback.message.edit_text(f"Вы успешно удалили категорию {category_id}",
-                                     reply_markup=admin.admin_return_menu_kb)
-    await callback.answer()
-
-
 @notify_service_router.message(NotifySendTextForm.text)
 async def receive_notify_message_text(message: Message, state: FSMContext):
     category_id = (await state.get_data())["category_id"]
     # request to api to send message.text
     await state.clear()
-    await message.answer(f"Вы успешно отправили текст {message.text}", reply_markup=admin.admin_return_menu_kb)
+    await message.answer(f"Вы успешно отправили текст {message.text}",
+                         reply_markup=admin.admin_return_notify_categories_kb())
+
+
+@notify_service_router.callback_query(admin.NotifyCategoryKb.filter(F.action.endswith("/delete")))
+async def call_delete_category_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoryKb):
+    category_id = callback_data.category_id
+    # request to api to delete category
+    await callback.message.edit_text(f"Вы успешно удалили категорию {category_id}",
+                                     reply_markup=admin.admin_return_notify_categories_kb())
+    await callback.answer()
+
+
+@notify_service_router.callback_query(admin.NotifyServiceMenuKb.filter(F.action == "/create_category"))
+async def call_create_category(callback: CallbackQuery, callback_data: admin.NotifyServiceMenuKb, state: FSMContext):
+    await state.set_state(CreateCategoryForm.name)
+    await callback.message.edit_text("Введите название новой категории:")
+
+
+@notify_service_router.message(CreateCategoryForm.name)
+async def receive_created_category_name(message: Message, state: FSMContext):
+    await state.clear()
+    # request to api to create category
+    await message.answer(f"Вы успешно создали категорию {message.text}",
+                         reply_markup=admin.admin_return_notify_service_menu_kb())
 
 
 def setup(*, dispatcher: Dispatcher):

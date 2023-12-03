@@ -7,21 +7,13 @@ class AdminMainMenuKb(CallbackData, prefix="admin_menu"):
     action: str
 
 
-admin_main_kb = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(text="Заявки на матпомощь",
-                                 callback_data=AdminMainMenuKb(action="/material_help").pack()),
-            InlineKeyboardButton(text="Серсис уведомлений",
-                                 callback_data=AdminMainMenuKb(action="/notify_service").pack())
-        ]
-    ]
-)
-
-admin_return_menu_kb = InlineKeyboardMarkup(
-    inline_keyboard=[
-        [
-            InlineKeyboardButton(text="В меню 🔼", callback_data=AdminMainMenuKb(action="/").pack())
-        ]
-    ]
-)
+def admin_main_kb() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        *[InlineKeyboardButton(text="Заявки на матпомощь",
+                               callback_data=AdminMainMenuKb(action="/material_help").pack()),
+          InlineKeyboardButton(text="Серсис уведомлений",
+                               callback_data=AdminMainMenuKb(action="/notify_service").pack())],
+        width=2
+    )
+    return builder.as_markup()

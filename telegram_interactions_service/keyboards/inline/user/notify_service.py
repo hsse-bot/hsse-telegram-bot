@@ -2,11 +2,11 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.filters.callback_data import CallbackData
 from telegram_interactions_service.misc import constants, dataclasses
-from .main_menu import AdminMainMenuKb
 from typing import List
+from telegram_interactions_service.keyboards.inline.user.main_menu import UserMainMenuKb
 
 
-class NotifyServiceMenuKb(CallbackData, prefix=AdminMainMenuKb.__prefix__ + "/notify_service"):
+class NotifyServiceMenuKb(CallbackData, prefix=UserMainMenuKb.__prefix__ + "/notify_service"):
     action: str
 
 
@@ -20,7 +20,7 @@ class NotifyCategoryKb(CallbackData, prefix=NotifyCategoriesKb.__prefix__ + "/id
     category_id: int
 
 
-def notify_categories_paginator(categories: List[dataclasses.NotifyCategory], page: int) -> InlineKeyboardMarkup:
+def notify_categories_paginator_kb(categories: List[dataclasses.NotifyCategory], page: int) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     cur_index = page * constants.MAX_CATEGORIES_PER_PAGE
     for i in range(cur_index, min(len(categories), cur_index + constants.MAX_CATEGORIES_PER_PAGE)):
@@ -37,18 +37,11 @@ def notify_categories_paginator(categories: List[dataclasses.NotifyCategory], pa
     return builder.as_markup()
 
 
-def admin_notify_category_kb(category_id: int, page: int) -> InlineKeyboardMarkup:
+def user_notify_category_kb(category_id: int, page: int) -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="Отправить сообщение",
-                             callback_data=NotifyCategoryKb(action=f"/{category_id}/send_text",
-                                                            category_id=category_id).pack()),
-        width=1
-    )
-    builder.row(
-        InlineKeyboardButton(text="Удалить категорию",
-                             callback_data=NotifyCategoryKb(action=f"/{category_id}/delete",
-                                                            category_id=category_id).pack()),
+        InlineKeyboardButton(text="Отписаться", callback_data=NotifyCategoryKb(action=f"/{category_id}/unsubscribe",
+                                                                               category_id=category_id).pack()),
         width=1
     )
     builder.row(
@@ -58,34 +51,22 @@ def admin_notify_category_kb(category_id: int, page: int) -> InlineKeyboardMarku
     return builder.as_markup()
 
 
-def admin_notify_service_menu_kb() -> InlineKeyboardMarkup:
+def user_notify_service_menu_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="Все категории", callback_data=NotifyCategoriesKb(action="/", page=0).pack()),
+        InlineKeyboardButton(text="Мои подписки", callback_data=NotifyCategoriesKb(action="/", page=0).pack()),
         width=1
     )
     builder.row(
-        InlineKeyboardButton(text="Создать категорию",
-                             callback_data=NotifyServiceMenuKb(action="/create_category").pack()),
-        width=1
+        InlineKeyboardButton(text="⬅", callback_data=UserMainMenuKb(action="/").pack()), width=1
     )
-    builder.row(InlineKeyboardButton(text="⬅", callback_data=AdminMainMenuKb(action="/").pack()), width=1)
     return builder.as_markup()
 
 
-def admin_return_notify_categories_kb() -> InlineKeyboardMarkup:
+def user_return_notify_categories_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(text="🔼", callback_data=NotifyCategoriesKb(action="/", page=0).pack()),
-        width=1
-    )
-    return builder.as_markup()
-
-
-def admin_return_notify_service_menu_kb() -> InlineKeyboardMarkup:
-    builder = InlineKeyboardBuilder()
-    builder.row(
-        InlineKeyboardButton(text="🔼", callback_data=NotifyServiceMenuKb(action="/").pack()),
         width=1
     )
     return builder.as_markup()
