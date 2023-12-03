@@ -4,3 +4,7 @@ class BotException(Exception):
 
 class BadRegistrationInput(BotException):
     pass
+
+
+class EmailAlreadyUsed(BotException):
+    pass
