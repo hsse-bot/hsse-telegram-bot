@@ -4,8 +4,8 @@ from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
 from telegram_interactions_service.states.registration_states import RegistrationForm
 from telegram_interactions_service.middlewares.registration_middleware import IsUnregisteredMiddleware
-from telegram_interactions_service.misc.dataclasses import InputUserData
-from telegram_interactions_service.exceptions import BadRegistrationInput
+from telegram_interactions_service.misc.dataclasses import RegistrationUserData
+from telegram_interactions_service.exceptions import BadRegistrationInput, EmailAlreadyUsed
 from telegram_interactions_service.services_interactions.user_managing_service import UserManagingServiceInteraction
 from typing import NoReturn
 
@@ -54,12 +54,19 @@ async def receive_email_address(message: Message, state: FSMContext) -> NoReturn
     user_data = await state.get_data()
     await state.clear()
     try:
-        user = InputUserData(**user_data, email_address=message.text, tg_id=message.from_user.id)
+        user = RegistrationUserData(**user_data, email_address=message.text, tg_id=message.from_user.id)
     except BadRegistrationInput as error:
         await message.answer("Данные введены в неверном формате! Пройдите регистрацию заново!")
         return
-    user_managing_service = UserManagingServiceInteraction()
-    await user_managing_service.add_user_to_database(user)
+    try:
+        user_managing_service = UserManagingServiceInteraction()
+        user_managing_service.add_user_to_database(user)
+    except EmailAlreadyUsed as error:
+        await message.answer(
+            "Данный email адрес уже присутствует в системе! "
+            "Используйте другой email или обратитесь к админимстратору"
+        )
+        return
     await message.answer(f"{user_data['name'].capitalize()}, Вы успешно зарегистрированы!")
 
 

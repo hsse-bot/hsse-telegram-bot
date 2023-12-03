@@ -4,7 +4,7 @@ import aiohttp
 
 from ..config import DEBUG_MODE
 from telegram_interactions_service.services_interactions import interactions_interfaces
-from ..misc.dataclasses import User, Form, Role, StudentInfo, UserDelta, FormTicket, InputUserData
+from ..misc.dataclasses import User, Form, Role, StudentInfo, UserDelta, FormTicket, RegistrationUserData
 from .paths import user_service_api_url
 from ..exceptions import UserManagingServiceError
 

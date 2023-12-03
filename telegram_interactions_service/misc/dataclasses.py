@@ -1,4 +1,5 @@
 from pydantic import BaseModel, validator
+from dataclasses import dataclass
 from datetime import datetime
 from typing import List
 import re
@@ -63,7 +64,7 @@ class NotifyCategory(BaseModel):
     name: str
 
 
-class InputUserData(BaseModel):
+class RegistrationUserData(BaseModel):
     name: str
     surname: str
     group: str
