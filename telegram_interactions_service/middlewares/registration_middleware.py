@@ -9,7 +9,7 @@ class IsUnregisteredMiddleware(BaseMiddleware):
                        event: Message, data: Dict[str, Any]) -> Any:
         user_tg_id = event.from_user.id
         user_managing_service = UserManagingServiceInteraction()
-        if user_managing_service.get_user(user_tg_id) is None:
+        if await user_managing_service.get_user(user_tg_id) is None:
             return await handler(event, data)
         await event.answer("Вы уже зарегистрированы!")
 
@@ -19,5 +19,5 @@ class IsRegisteredMiddleware(BaseMiddleware):
                        event: Message, data: Dict[str, Any]) -> Any:
         user_tg_id = event.from_user.id
         user_managing_service = UserManagingServiceInteraction()
-        if user_managing_service.get_user(user_tg_id) is not None:
+        if await user_managing_service.get_user(user_tg_id) is not None:
             return await handler(event, data)

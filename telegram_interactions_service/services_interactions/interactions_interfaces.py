@@ -7,6 +7,10 @@ from ..misc.dataclasses import User, Form, Role, UserDelta, FormTicket, Material
 
 class UserManagingServiceInteractionInterface(ABC):
     @abstractmethod
+    async def get_role_id(self, role_name: str) -> int:
+        pass
+
+    @abstractmethod
     async def add_user_to_database(self, user: RegistrationUserData) -> NoReturn:
         pass
 
@@ -39,7 +43,7 @@ class UserManagingServiceInteractionInterface(ABC):
         pass
 
     @abstractmethod
-    def is_admin(self, tg_id: int) -> bool:
+    async def is_admin(self, tg_id: int) -> bool:
         pass
 
 

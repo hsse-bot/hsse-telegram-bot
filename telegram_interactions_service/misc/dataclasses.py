@@ -9,7 +9,6 @@ from telegram_interactions_service.exceptions import BadRegistrationInput
 class Role(BaseModel):
     id: int
     name: str
-    is_admin: bool
 
 
 class StudentInfo(BaseModel):

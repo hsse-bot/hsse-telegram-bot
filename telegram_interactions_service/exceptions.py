@@ -12,3 +12,7 @@ class EmailAlreadyUsed(BotException):
 
 class TelegramNotifierServiceError(BotException):
     pass
+
+
+class UserManagingServiceError(BotException):
+    pass
