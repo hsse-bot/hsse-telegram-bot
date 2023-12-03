@@ -9,5 +9,5 @@ class IsAdminMiddleware(BaseMiddleware):
                        event: Message, data: Dict[str, Any]) -> Any:
         user_tg_id = event.from_user.id
         user_managing_service = UserManagingServiceInteraction()
-        if user_managing_service.is_admin(user_tg_id):
+        if await user_managing_service.is_admin(user_tg_id):
             return await handler(event, data)

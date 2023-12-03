@@ -3,10 +3,14 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram import Router
-from telegram_interactions_service.states.notify_service_states import NotifySendTextForm
+
 from telegram_interactions_service.misc import dataclasses, constants
 from telegram_interactions_service.middlewares.admin_middleware import IsAdminMiddleware
 from telegram_interactions_service.keyboards.inline import user
+from telegram_interactions_service.services_interactions.telegram_notifier_service import \
+    TelegramNotifierServiceInteraction
+from telegram_interactions_service.exceptions import TelegramNotifierServiceError
+from telegram_interactions_service.misc.message_templates import error_text
 
 notify_service_router = Router()
 
@@ -18,16 +22,26 @@ async def cmd_notify_service(message: Message):
 
 @notify_service_router.callback_query(user.NotifyCategoriesKb.filter(F.action == "/"))
 async def call_categories_handler(callback: CallbackQuery, callback_data: user.NotifyCategoriesKb):
-    categories = [dataclasses.NotifyCategory(id=i, name=f"Категория {i}") for i in range(constants.MAX_CATEGORIES_CNT)]
+    try:
+        categories = await TelegramNotifierServiceInteraction().get_all_categories()
+    except TelegramNotifierServiceError as error:
+        # TODO logs
+        await callback.message.edit_text(error_text, reply_markup=user.user_notify_service_menu_kb())
+        return
     await callback.message.edit_text(f"Категории уведомлений:",
-                                     reply_markup=user.notify_categories_paginator_kb(categories, callback_data.page))
+                                     reply_markup=user.notify_categories_paginator_kb(categories,
+                                                                                      callback_data.page))
     await callback.answer()
 
 
 @notify_service_router.callback_query(user.NotifyCategoriesKb.filter(F.action.in_(["/prev", "/next"])))
 async def call_categories_pagination_handler(callback: CallbackQuery, callback_data: user.NotifyCategoriesKb):
-    # categories = get_all_categories()
-    categories = [dataclasses.NotifyCategory(id=i, name=f"Категория {i}") for i in range(constants.MAX_CATEGORIES_CNT)]
+    try:
+        categories = await TelegramNotifierServiceInteraction().get_all_categories()
+    except TelegramNotifierServiceError as error:
+        # TODO logs
+        await callback.message.edit_text(error_text, reply_markup=user.user_notify_service_menu_kb())
+        return
     max_page, cur_page = (len(categories) - 1) // constants.MAX_CATEGORIES_PER_PAGE, int(callback_data.page)
     next_categories_page = cur_page
     if callback_data.action == "/next":
