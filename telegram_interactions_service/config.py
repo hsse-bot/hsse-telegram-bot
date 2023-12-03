@@ -2,6 +2,9 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
+
+DEBUG_MODE = os.getenv("DEBUG_MODE").lower() == 'true'
+
 TOKEN_API = os.getenv("TG_TOKEN")
 TUNNEL_URL = os.getenv("TUNNEL_URL")
 WEB_APP_HOST = os.getenv("WEB_APP_HOST")

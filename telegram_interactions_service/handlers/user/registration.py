@@ -59,7 +59,7 @@ async def receive_email_address(message: Message, state: FSMContext) -> NoReturn
         await message.answer("Данные введены в неверном формате! Пройдите регистрацию заново!")
         return
     user_managing_service = UserManagingServiceInteraction()
-    user_managing_service.add_user_to_database(user)
+    await user_managing_service.add_user_to_database(user)
     await message.answer(f"{user_data['name'].capitalize()}, Вы успешно зарегистрированы!")
 
 
