@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using TelegramNotifierService;
 using TelegramNotifierService.Data.Database;
 using TelegramNotifierService.Data.Repositories;
+using TelegramNotifierService.Middlewares;
 using TelegramNotifierService.Services.Data;
 using TelegramNotifierService.Services.Notifying;
 using TelegramNotifierService.Services.Telegram;
@@ -14,7 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient("TelegramApiClient", client =>
 {
     var token = EnvConfig.TgToken;
-    client.BaseAddress = new Uri($"https://api.telegram.org/bot{token}");
+    client.BaseAddress = new Uri($"https://api.telegram.org/bot{token}/");
 });
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 34));
@@ -40,12 +41,19 @@ builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>()
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<TelegramNotifyingContext>();
+    db.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
+app.UseMiddleware<ExceptionsHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

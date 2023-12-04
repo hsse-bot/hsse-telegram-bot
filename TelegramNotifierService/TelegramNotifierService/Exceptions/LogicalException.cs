@@ -2,13 +2,15 @@
 
 public class LogicalException : Exception
 {
-    public LogicalException()
+    public LogicalException(string tag)
     {
-        
+        Tag = tag;
     }
 
-    public LogicalException(string message) : base(message)
+    public LogicalException(string tag, string message) : base(message)
     {
-        
+        Tag = tag;
     }
+    
+    public string Tag { get; }
 }

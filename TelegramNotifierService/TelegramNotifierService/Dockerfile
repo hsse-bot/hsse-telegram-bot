@@ -5,10 +5,10 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["TelegramNotifierService/TelegramNotifierService.csproj", "TelegramNotifierService/"]
+COPY ["./TelegramNotifierService.csproj", "TelegramNotifierService/"]
 RUN dotnet restore "TelegramNotifierService/TelegramNotifierService.csproj"
-COPY . .
 WORKDIR "/src/TelegramNotifierService"
+COPY . .
 RUN dotnet build "TelegramNotifierService.csproj" -c Release -o /app/build
 
 FROM build AS publish
