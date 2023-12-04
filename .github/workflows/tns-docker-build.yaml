@@ -1,5 +1,7 @@
 name: "Telegram Notifier Service Build"
-on: push
+on: 
+  push:
+    branches: master
 jobs:
   docker_build:
     name: Build Docker Image
