@@ -2,7 +2,9 @@
 
 public class CategoryNotFoundException : LogicalException
 {
-    public CategoryNotFoundException() : base("Category not found")
+    private const string ExceptionTag = "SUBSCRIPTION_NOT_FOUND";
+    
+    public CategoryNotFoundException() : base(ExceptionTag, "Category not found")
     {
         
     }    

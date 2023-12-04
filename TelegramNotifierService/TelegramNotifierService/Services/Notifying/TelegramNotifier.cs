@@ -18,6 +18,6 @@ public class TelegramNotifier : INotifier
     public async Task NotifyAllBySubscriptionAsync(long categoryId, string messageContent, CancellationToken cancellationToken)
     {
         var allByCategory = await _subscriptionsManager.GetAllSubscriptionsByCategoryAsync(categoryId);
-        await _messagingHelper.SendBulkMessageAsync(allByCategory.Select(x => x.Id), messageContent, cancellationToken);
+        await _messagingHelper.SendBulkMessageAsync(allByCategory.Select(x => x.ConsumerId), messageContent, cancellationToken);
     }
 }

@@ -3,15 +3,19 @@ using TelegramNotifierService.Exceptions;
 
 namespace TelegramNotifierService.Middlewares;
 
-public class LogicalExceptionsHandlingMiddleware
+public class ExceptionsHandlingMiddleware
 {
     private const int BadRequestStatusCode = 400;
+    private const int InternalServerErrorStatusCode = 500;
     
     private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionsHandlingMiddleware> _logger;
 
-    public LogicalExceptionsHandlingMiddleware(RequestDelegate next)
+    public ExceptionsHandlingMiddleware(RequestDelegate next, 
+        ILogger<ExceptionsHandlingMiddleware> logger)
     {
         _next = next;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -24,6 +28,16 @@ public class LogicalExceptionsHandlingMiddleware
         {
             context.Response.StatusCode = BadRequestStatusCode;
             await context.Response.WriteAsJsonAsync(ErrorResponse.FromException(e));
+        }
+        catch (Exception e)
+        {
+            context.Response.StatusCode = InternalServerErrorStatusCode;
+            await context.Response.WriteAsJsonAsync(ErrorResponse.FromException(e));
+            _logger.LogError(e, "Exception");
+
+#if DEBUG
+            throw;
+#endif
         }
     }
 }

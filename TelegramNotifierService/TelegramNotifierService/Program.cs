@@ -15,7 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient("TelegramApiClient", client =>
 {
     var token = EnvConfig.TgToken;
-    client.BaseAddress = new Uri($"https://api.telegram.org/bot{token}");
+    client.BaseAddress = new Uri($"https://api.telegram.org/bot{token}/");
 });
 
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 34));
@@ -47,7 +47,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseMiddleware<LogicalExceptionsHandlingMiddleware>();
+app.UseMiddleware<ExceptionsHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

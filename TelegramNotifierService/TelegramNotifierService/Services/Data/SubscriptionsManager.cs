@@ -89,12 +89,15 @@ public class SubscriptionsManager : ISubscriptionsManager
 
     public async Task UnsubscribeUserAsync(long consumerId, long subTypeId)
     {
-        _subscriptionsRepository.Remove(new Subscription
-        {
-            ConsumerId = consumerId,
-            CategoryId = subTypeId
-        });
+        var subscription =  _subscriptionsRepository.GetAll()
+            .FirstOrDefault(x => x.ConsumerId == consumerId && x.CategoryId == subTypeId);
 
+        if (subscription == null)
+        {
+            throw new SubscriptionNotFoundException();
+        }
+        
+        _subscriptionsRepository.Remove(subscription);
         await _subscriptionsRepository.SaveChangesAsync();
     }
 
