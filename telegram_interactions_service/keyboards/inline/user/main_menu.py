@@ -17,4 +17,3 @@ def user_main_kb() -> InlineKeyboardMarkup:
         width=2
     )
     return builder.as_markup()
-

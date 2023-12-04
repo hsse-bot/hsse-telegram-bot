@@ -98,17 +98,21 @@ class TelegramNotifierServiceInteractionInterface(ABC):
         pass
 
     @abstractmethod
+    async def get_category(self, category_id: int) -> NotifyCategory:
+        pass
+
+    @abstractmethod
     async def get_all_categories(self) -> List[NotifyCategory]:
         pass
 
     @abstractmethod
-    async def get_user_categories(self, user: User) -> List[NotifyCategory]:
+    async def get_user_categories(self, user_tg_id: int) -> List[NotifyCategory]:
         pass
 
     @abstractmethod
-    async def sub_user_to_category(self, user: User, category: NotifyCategory) -> NoReturn:
+    async def sub_user_to_category(self, user_tg_id: int, category_id: int) -> NoReturn:
         pass
 
     @abstractmethod
-    async def unsub_user_to_category(self, user: User, category: NotifyCategory) -> NoReturn:
+    async def unsub_user_to_category(self, user_tg_id: int, category_id: int) -> NoReturn:
         pass
