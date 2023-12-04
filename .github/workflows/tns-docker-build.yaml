@@ -13,7 +13,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ secrets.GHCR_USERNAME }}
-          password: ${{ secrets.GHCR_PAT }}
+          password: ${{ secrets.PAT }}
       - name: Setup Buildx
         uses: docker/setup-buildx-action@v3.0.0
       - name: Build and push to GHCR
