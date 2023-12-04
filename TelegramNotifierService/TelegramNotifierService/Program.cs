@@ -41,6 +41,12 @@ builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>()
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<TelegramNotifyingContext>();
+    db.Database.Migrate();
+}
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
