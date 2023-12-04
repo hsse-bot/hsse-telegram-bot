@@ -22,5 +22,5 @@ jobs:
           context: ./TelegramNotifierService/TelegramNotifierService/
           file: ./TelegramNotifierService/TelegramNotifierService/Dockerfile
           push: true
-          tags: hsse-bot/telegram-notifier-service:latest
+          tags: denvot/telegram-notifier-service:latest
           
