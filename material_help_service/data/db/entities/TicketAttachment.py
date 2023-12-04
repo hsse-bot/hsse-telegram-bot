@@ -8,6 +8,7 @@ class TicketAttachment(Base):
     __tablename__ = "ticket_attachment"
 
     id: Mapped[BigInteger] = mapped_column(primary_key=True)
+    filename: Mapped[String]
     mime_type: Mapped[String]
     content: Mapped[LargeBinary]
     ticket_id: Mapped[BigInteger] = mapped_column(ForeignKey("ticket.id"))
