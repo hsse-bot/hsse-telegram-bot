@@ -7,7 +7,7 @@ public static class EnvConfig
    
    private static string GetEnvVar(string name)
    {
-      var value = Environment.GetEnvironmentVariable("MY_SQL_CONNECTION_STRING");
+      var value = Environment.GetEnvironmentVariable(name);
 
       if (value == null)
       {
