@@ -26,13 +26,10 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
                 if response.status != 200:
                     raise UserManagingServiceError(f'response status is {response.status} (not 200)')
 
-    async def set_user_role(self, user: User, new_role: Role) -> NoReturn:
-        pass
-
     async def add_admin(self, user: User) -> NoReturn:
         pass
 
-    async def get_score(self, user: User) -> int | None:
+    async def set_user_role(self, user: User, new_role: Role) -> NoReturn:
         pass
 
     async def update_user(self, user: User, new_user_data: UserDelta) -> NoReturn:
@@ -52,9 +49,6 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
                     raise UserManagingServiceError(f'response status is {response.status} (not 200)')
 
     async def get_top_scores(self) -> List[User] | None:
-        pass
-
-    async def get_user_role(self, user: User) -> Role | None:
         pass
 
     async def get_user(self, tg_id: int) -> User | None:
@@ -80,7 +74,7 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
                 except KeyError:
                     raise UserManagingServiceError(f'bad data: {data}')
 
-    async def is_admin(self, tg_id: int) -> bool:
+    async def is_admin(self, tg_id: int) -> bool:  # role is admin or role is superuser
         if DEBUG_MODE:
             return True
         #TODO

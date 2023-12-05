@@ -23,19 +23,11 @@ class UserManagingServiceInteractionInterface(ABC):
         pass
 
     @abstractmethod
-    async def get_score(self, user: User) -> int | None:
-        pass
-
-    @abstractmethod
     async def update_user(self, user: User, new_user_data: UserDelta) -> NoReturn:
         pass
 
     @abstractmethod
     async def get_top_scores(self) -> List[User] | None:
-        pass
-
-    @abstractmethod
-    async def get_user_role(self, user: User) -> Role | None:
         pass
 
     @abstractmethod
