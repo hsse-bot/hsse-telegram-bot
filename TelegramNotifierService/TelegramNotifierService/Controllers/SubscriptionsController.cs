@@ -21,7 +21,7 @@ public class SubscriptionsController : ControllerBase
     {
         var subs = await _subscriptionsManager.GetAllSubscriptionsByConsumerAsync(consumerId);
 
-        return Ok(subs.Select(SubscriptionResponse.FromDb));
+        return Ok(subs.ToList().Select(x => CategoryResponse.FromDb(x.Category)));
     }
     
     [HttpPost("{consumerId:long}/categories/{categoryId:long}/subscribe")]
