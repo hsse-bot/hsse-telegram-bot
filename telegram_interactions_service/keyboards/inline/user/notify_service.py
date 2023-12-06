@@ -17,9 +17,9 @@ class NotifyCategoriesKb(CallbackData, prefix=NotifyServiceMenuKb.__prefix__ + "
     page: int
 
 
-class NotifyCategoryKb(CallbackData, prefix=NotifyCategoriesKb.__prefix__ + "/id"):
-    action: str
-    category_id: int
+# class NotifyCategoryKb(CallbackData, prefix=NotifyCategoriesKb.__prefix__ + "/id"):
+#     action: str
+#     category_id: int
 
 
 def notify_categories_paginator_kb(all_categories: List[dataclasses.NotifyCategory],
@@ -33,7 +33,7 @@ def notify_categories_paginator_kb(all_categories: List[dataclasses.NotifyCatego
             builder.row(
                 InlineKeyboardButton(
                     text=f"{emoji} {all_categories[i].name}",
-                    callback_data=NotifyCategoriesKb(action=f"/unsub/id/{all_categories[i].id}",
+                    callback_data=NotifyCategoriesKb(action=f"/id/unsub/{all_categories[i].id}",
                                                      page=page).pack()),
                 width=1
             )
@@ -42,7 +42,7 @@ def notify_categories_paginator_kb(all_categories: List[dataclasses.NotifyCatego
             builder.row(
                 InlineKeyboardButton(
                     text=f"{emoji} {all_categories[i].name}",
-                    callback_data=NotifyCategoriesKb(action=f"/sub/id/{all_categories[i].id}",
+                    callback_data=NotifyCategoriesKb(action=f"/id/sub/{all_categories[i].id}",
                                                      page=page).pack()),
                 width=1
             )
@@ -54,18 +54,18 @@ def notify_categories_paginator_kb(all_categories: List[dataclasses.NotifyCatego
     return builder.as_markup()
 
 
-def user_notify_category_kb(category_id: int, page: int) -> InlineKeyboardMarkup:
-    builder = InlineKeyboardBuilder()
-    builder.row(
-        InlineKeyboardButton(text="Отписаться", callback_data=NotifyCategoryKb(action=f"/{category_id}/unsubscribe",
-                                                                               category_id=category_id).pack()),
-        width=1
-    )
-    builder.row(
-        InlineKeyboardButton(text="⬅", callback_data=NotifyCategoriesKb(action="/", page=page).pack()),
-        width=1
-    )
-    return builder.as_markup()
+# def user_notify_category_kb(category_id: int, page: int) -> InlineKeyboardMarkup:
+#     builder = InlineKeyboardBuilder()
+#     builder.row(
+#         InlineKeyboardButton(text="Отписаться", callback_data=NotifyCategoryKb(action=f"/{category_id}/unsubscribe",
+#                                                                                category_id=category_id).pack()),
+#         width=1
+#     )
+#     builder.row(
+#         InlineKeyboardButton(text="⬅", callback_data=NotifyCategoriesKb(action="/", page=page).pack()),
+#         width=1
+#     )
+#     return builder.as_markup()
 
 
 def user_notify_service_menu_kb() -> InlineKeyboardMarkup:

@@ -78,15 +78,15 @@ class MaterialHelpServiceInteractionInterface(ABC):
 
 class TelegramNotifierServiceInteractionInterface(ABC):
     @abstractmethod
-    async def notify(self, category: NotifyCategory, text: str) -> NoReturn:
+    async def notify(self, category_id: int, text: str) -> NoReturn:
         pass
 
     @abstractmethod
-    async def create_category(self, category: NotifyCategory) -> NoReturn:
+    async def create_category(self, category_name: str) -> NoReturn:
         pass
 
     @abstractmethod
-    async def delete_category(self, category: NotifyCategory) -> NoReturn:
+    async def delete_category(self, category_id: int) -> NoReturn:
         pass
 
     @abstractmethod
