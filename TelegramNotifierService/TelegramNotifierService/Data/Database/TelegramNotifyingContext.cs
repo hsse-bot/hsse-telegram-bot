@@ -38,7 +38,7 @@ public partial class TelegramNotifyingContext : DbContext
 
             entity.HasOne(d => d.Category).WithMany(p => p.Subscriptions)
                 .HasForeignKey(d => d.CategoryId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("subscriptions_ibfk_1");
         });
 
