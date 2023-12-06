@@ -38,6 +38,11 @@ async def call_categories_handler(callback: CallbackQuery, callback_data: admin.
                                          reply_markup=admin.admin_notify_service_menu_kb())
         await callback.answer()
         return
+    if len(categories) == 0:
+        await callback.message.edit_text(f"Пока что нет категорий уведомлений",
+                                         reply_markup=admin.admin_return_notify_service_menu_kb())
+        await callback.answer()
+        return
     max_page, cur_page = (len(categories) - 1) // constants.MAX_CATEGORIES_PER_PAGE, int(callback_data.page)
     await callback.message.edit_text(f"Категории уведомлений: {cur_page+1}/{max_page+1}",
                                      reply_markup=admin.notify_categories_paginator(categories, callback_data.page))
@@ -52,6 +57,11 @@ async def call_categories_pagination_handler(callback: CallbackQuery, callback_d
         logger.log(level=logging.ERROR, msg=error, exc_info=True)
         await callback.message.edit_text(message_templates.error_admin_text,
                                          reply_markup=admin.admin_notify_service_menu_kb())
+        await callback.answer()
+        return
+    if len(categories) == 0:
+        await callback.message.edit_text(f"Пока что нет категорий уведомлений",
+                                         reply_markup=admin.admin_return_notify_service_menu_kb())
         await callback.answer()
         return
     max_page, cur_page = (len(categories) - 1) // constants.MAX_CATEGORIES_PER_PAGE, int(callback_data.page)

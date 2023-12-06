@@ -33,6 +33,11 @@ async def call_categories_handler(callback: CallbackQuery, callback_data: user.N
         await callback.message.edit_text(message_templates.error_user_text, reply_markup=user.error_kb())
         await callback.answer()
         return
+    if len(all_categories) == 0:
+        await callback.message.edit_text(f"Пока что нет категорий уведомлений",
+                                         reply_markup=user.error_kb())
+        await callback.answer()
+        return
     max_page, cur_page = (len(all_categories) - 1) // constants.MAX_CATEGORIES_PER_PAGE, int(callback_data.page)
     await callback.message.edit_text(f"Категории уведомлений: {cur_page+1}/{max_page+1}",
                                      reply_markup=user.notify_categories_paginator_kb(all_categories,
@@ -49,6 +54,11 @@ async def call_categories_pagination_handler(callback: CallbackQuery, callback_d
     except Exception as error:
         logger.log(level=logging.ERROR, msg=error, exc_info=True)
         await callback.message.edit_text(message_templates.error_user_text, reply_markup=user.error_kb())
+        await callback.answer()
+        return
+    if len(all_categories) == 0:
+        await callback.message.edit_text(f"Пока что нет категорий уведомлений",
+                                         reply_markup=user.error_kb())
         await callback.answer()
         return
     max_page, cur_page = (len(all_categories) - 1) // constants.MAX_CATEGORIES_PER_PAGE, int(callback_data.page)
@@ -83,10 +93,12 @@ async def call_category_handler(callback: CallbackQuery, callback_data: user.Not
                                              reply_markup=user.error_kb())
             await callback.answer()
             return
-        await callback.message.edit_text(f"Вы успешно подписались на уведомления {category.name}",
-                                         reply_markup=user.user_return_notify_categories_kb())
-        await callback.answer()
-    elif callback_data.action.endswith("id/unsub/"):
+        await call_categories_pagination_handler(callback, callback_data)
+        return
+        # await callback.message.edit_text(f"Вы успешно подписались на уведомления {category.name}",
+        #                                  reply_markup=user.user_return_notify_categories_kb())
+        # await callback.answer()
+    elif callback_data.action.startswith("/id/unsub/"):
         category_id = int(callback_data.action[10:])
         try:
             await TelegramNotifierServiceInteraction().unsub_user_to_category(callback.from_user.id, category_id)
@@ -97,9 +109,11 @@ async def call_category_handler(callback: CallbackQuery, callback_data: user.Not
                                              reply_markup=user.error_kb())
             await callback.answer()
             return
-        await callback.message.edit_text(f"Вы успешно отписались от уведомлений категории {category.name}",
-                                         reply_markup=user.user_return_notify_categories_kb())
-        await callback.answer()
+        await call_categories_pagination_handler(callback, callback_data)
+        # return
+        # await callback.message.edit_text(f"Вы успешно отписались от уведомлений категории {category.name}",
+        #                                  reply_markup=user.user_return_notify_categories_kb())
+        # await callback.answer()
     else:
         logger.log(level=logging.ERROR, msg=f"unknown action '{callback_data.action}'")
 
