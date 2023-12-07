@@ -23,19 +23,11 @@ class UserManagingServiceInteractionInterface(ABC):
         pass
 
     @abstractmethod
-    async def get_score(self, user: User) -> int | None:
-        pass
-
-    @abstractmethod
     async def update_user(self, user: User, new_user_data: UserDelta) -> NoReturn:
         pass
 
     @abstractmethod
     async def get_top_scores(self) -> List[User] | None:
-        pass
-
-    @abstractmethod
-    async def get_user_role(self, user: User) -> Role | None:
         pass
 
     @abstractmethod
@@ -86,15 +78,19 @@ class MaterialHelpServiceInteractionInterface(ABC):
 
 class TelegramNotifierServiceInteractionInterface(ABC):
     @abstractmethod
-    async def notify(self, category: NotifyCategory, text: str) -> NoReturn:
+    async def notify(self, category_id: int, text: str) -> NoReturn:
         pass
 
     @abstractmethod
-    async def create_category(self, category: NotifyCategory) -> NoReturn:
+    async def create_category(self, category_name: str) -> NoReturn:
         pass
 
     @abstractmethod
-    async def delete_category(self, category: NotifyCategory) -> NoReturn:
+    async def delete_category(self, category_id: int) -> NoReturn:
+        pass
+
+    @abstractmethod
+    async def get_category(self, category_id: int) -> NotifyCategory:
         pass
 
     @abstractmethod
@@ -102,13 +98,13 @@ class TelegramNotifierServiceInteractionInterface(ABC):
         pass
 
     @abstractmethod
-    async def get_user_categories(self, user: User) -> List[NotifyCategory]:
+    async def get_user_categories(self, user_tg_id: int) -> List[NotifyCategory]:
         pass
 
     @abstractmethod
-    async def sub_user_to_category(self, user: User, category: NotifyCategory) -> NoReturn:
+    async def sub_user_to_category(self, user_tg_id: int, category_id: int) -> NoReturn:
         pass
 
     @abstractmethod
-    async def unsub_user_to_category(self, user: User, category: NotifyCategory) -> NoReturn:
+    async def unsub_user_to_category(self, user_tg_id: int, category_id: int) -> NoReturn:
         pass

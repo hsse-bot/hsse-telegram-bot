@@ -1,13 +1,16 @@
+from typing import NoReturn
+
 from aiogram import Router, F, Dispatcher
 from aiogram.filters import Command
-from aiogram.types import Message
 from aiogram.fsm.context import FSMContext
-from telegram_interactions_service.states.registration_states import RegistrationForm
-from telegram_interactions_service.middlewares.registration_middleware import IsUnregisteredMiddleware
-from telegram_interactions_service.misc.dataclasses import RegistrationUserData
+from aiogram.types import Message
+
 from telegram_interactions_service.exceptions import BadRegistrationInput, EmailAlreadyUsed
+from telegram_interactions_service.middlewares.registration_middleware import IsUnregisteredMiddleware
+from telegram_interactions_service.misc import message_templates
+from telegram_interactions_service.misc.dataclasses import RegistrationUserData
 from telegram_interactions_service.services_interactions.user_managing_service import UserManagingServiceInteraction
-from typing import NoReturn
+from telegram_interactions_service.states.registration_states import RegistrationForm
 
 registration_router = Router()
 
@@ -60,12 +63,16 @@ async def receive_email_address(message: Message, state: FSMContext) -> NoReturn
         return
     try:
         user_managing_service = UserManagingServiceInteraction()
-        user_managing_service.add_user_to_database(user)
+        await user_managing_service.add_user_to_database(user)
     except EmailAlreadyUsed as error:
         await message.answer(
             "Данный email адрес уже присутствует в системе! "
             "Используйте другой email или обратитесь к админимстратору"
         )
+        return
+    except Exception as error:
+        # TODO logs
+        await message.answer(message_templates.error_fail_to_unsub_category_text)
         return
     await message.answer(f"{user_data['name'].capitalize()}, Вы успешно зарегистрированы!")
 

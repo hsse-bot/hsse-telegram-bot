@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import F, Dispatcher
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
@@ -5,15 +7,14 @@ from aiogram.fsm.context import FSMContext
 from aiogram import Router
 
 from telegram_interactions_service.states.notify_service_states import NotifySendTextForm, CreateCategoryForm
-from telegram_interactions_service.misc import dataclasses, constants
+from telegram_interactions_service.misc import dataclasses, constants, message_templates
 from telegram_interactions_service.middlewares.admin_middleware import IsAdminMiddleware
 from telegram_interactions_service.keyboards.inline import admin
 from telegram_interactions_service.services_interactions.telegram_notifier_service import \
     TelegramNotifierServiceInteraction
-from telegram_interactions_service.misc.message_templates import error_text
-from telegram_interactions_service.exceptions import TelegramNotifierServiceError
 
 notify_service_router = Router()
+logger = logging.getLogger(__name__)
 
 
 @notify_service_router.message(Command("notify_service_admin"))
@@ -24,17 +25,26 @@ async def cmd_notify_service(message: Message):
 @notify_service_router.callback_query(admin.NotifyServiceMenuKb.filter(F.action == "/"))
 async def call_categories_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoriesKb):
     await callback.message.edit_text("Меню сервиса уведомлений", reply_markup=admin.admin_notify_service_menu_kb())
+    await callback.answer()
 
 
 @notify_service_router.callback_query(admin.NotifyCategoriesKb.filter(F.action == "/"))
 async def call_categories_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoriesKb):
     try:
         categories = await TelegramNotifierServiceInteraction().get_all_categories()
-    except TelegramNotifierServiceError as error:
-        # TODO logs
-        await callback.message.edit_text(error_text, reply_markup=admin.admin_notify_service_menu_kb())
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await callback.message.edit_text(message_templates.error_admin_text,
+                                         reply_markup=admin.admin_notify_service_menu_kb())
+        await callback.answer()
         return
-    await callback.message.edit_text(f"Категории уведомлений:",
+    if len(categories) == 0:
+        await callback.message.edit_text(f"Пока что нет категорий уведомлений",
+                                         reply_markup=admin.admin_return_notify_service_menu_kb())
+        await callback.answer()
+        return
+    max_page, cur_page = (len(categories) - 1) // constants.MAX_CATEGORIES_PER_PAGE, int(callback_data.page)
+    await callback.message.edit_text(f"Категории уведомлений: {cur_page+1}/{max_page+1}",
                                      reply_markup=admin.notify_categories_paginator(categories, callback_data.page))
     await callback.answer()
 
@@ -43,9 +53,16 @@ async def call_categories_handler(callback: CallbackQuery, callback_data: admin.
 async def call_categories_pagination_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoriesKb):
     try:
         categories = await TelegramNotifierServiceInteraction().get_all_categories()
-    except TelegramNotifierServiceError as error:
-        # TODO logs
-        await callback.message.edit_text(error_text, reply_markup=admin.admin_notify_service_menu_kb())
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await callback.message.edit_text(message_templates.error_admin_text,
+                                         reply_markup=admin.admin_notify_service_menu_kb())
+        await callback.answer()
+        return
+    if len(categories) == 0:
+        await callback.message.edit_text(f"Пока что нет категорий уведомлений",
+                                         reply_markup=admin.admin_return_notify_service_menu_kb())
+        await callback.answer()
         return
     max_page, cur_page = (len(categories) - 1) // constants.MAX_CATEGORIES_PER_PAGE, int(callback_data.page)
     next_categories_page = cur_page
@@ -61,7 +78,7 @@ async def call_categories_pagination_handler(callback: CallbackQuery, callback_d
             await callback.answer()
             return
         next_categories_page = cur_page - 1
-    await callback.message.edit_text(text="Категории уведомлений:",
+    await callback.message.edit_text(text=f"Категории уведомлений: {next_categories_page+1}/{max_page+1}",
                                      reply_markup=admin.notify_categories_paginator(categories, next_categories_page))
     await callback.answer()
 
@@ -86,7 +103,12 @@ async def call_send_text_handler(callback: CallbackQuery, callback_data: admin.N
 @notify_service_router.message(NotifySendTextForm.text)
 async def receive_notify_message_text(message: Message, state: FSMContext):
     category_id = (await state.get_data())["category_id"]
-    # request to api to send message.text
+    try:
+        await TelegramNotifierServiceInteraction().notify(category_id, message.text)
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await message.answer(message_templates.error_admin_text, reply_markup=admin.admin_notify_service_menu_kb())
+        return
     await state.clear()
     await message.answer(f"Вы успешно отправили текст {message.text}",
                          reply_markup=admin.admin_return_notify_categories_kb())
@@ -95,7 +117,14 @@ async def receive_notify_message_text(message: Message, state: FSMContext):
 @notify_service_router.callback_query(admin.NotifyCategoryKb.filter(F.action.endswith("/delete")))
 async def call_delete_category_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoryKb):
     category_id = callback_data.category_id
-    # request to api to delete category
+    try:
+        await TelegramNotifierServiceInteraction().delete_category(category_id)
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await callback.message.edit_text(message_templates.error_admin_text,
+                                         reply_markup=admin.admin_notify_service_menu_kb())
+        await callback.answer()
+        return
     await callback.message.edit_text(f"Вы успешно удалили категорию {category_id}",
                                      reply_markup=admin.admin_return_notify_categories_kb())
     await callback.answer()
@@ -105,12 +134,18 @@ async def call_delete_category_handler(callback: CallbackQuery, callback_data: a
 async def call_create_category(callback: CallbackQuery, callback_data: admin.NotifyServiceMenuKb, state: FSMContext):
     await state.set_state(CreateCategoryForm.name)
     await callback.message.edit_text("Введите название новой категории:")
+    await callback.answer()
 
 
 @notify_service_router.message(CreateCategoryForm.name)
 async def receive_created_category_name(message: Message, state: FSMContext):
     await state.clear()
-    # request to api to create category
+    try:
+        await TelegramNotifierServiceInteraction().create_category(message.text)
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await message.answer(message_templates.error_admin_text, reply_markup=admin.admin_notify_service_menu_kb())
+        return
     await message.answer(f"Вы успешно создали категорию {message.text}",
                          reply_markup=admin.admin_return_notify_service_menu_kb())
 
