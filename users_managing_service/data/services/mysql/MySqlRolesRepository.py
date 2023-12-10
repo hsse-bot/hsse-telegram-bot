@@ -12,12 +12,11 @@ class MySqlRolesRepository(Base):
     def __init__(self, engine: Engine):
         self.engine = engine
 
-    def create_role(self, role_name: str) -> RoleData:
+    def create_role(self, role_name: str) -> NoReturn:
         with Session(self.engine) as session:
-            role = RoleData(role_name=role_name)
+            role = Role(role_name=role_name)
             session.add(role)
             session.commit()
-            return role
 
     def get_role(self, role_id: int) -> RoleData:
         with Session(self.engine) as session:
@@ -35,5 +34,6 @@ class MySqlRolesRepository(Base):
     def delete_user(self, role_id: int) -> NoReturn:
         with Session(self.engine) as session:
             role = select(Role).where(Role.id == role_id)
-            session.delete(role)
-            session.commit()
+            if role:
+                session.delete(role)
+                session.commit()
