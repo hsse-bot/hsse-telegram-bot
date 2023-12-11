@@ -8,8 +8,8 @@ from data.common.RoleData import RoleData
 class UserData:
     name: str
     surname: str
-    tg_id: str
+    tg_id: int
     role: RoleData
-    student_info: Optional[StudentInfo]
+    student_info: Optional[StudentInfoData]
     score: int
     

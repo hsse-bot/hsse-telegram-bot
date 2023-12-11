@@ -7,3 +7,4 @@ class StudentInfo:
 
     id: Mapped[int] = mapped_column(primary_key=True)
     room_number: Mapped[int] = mapped_column()
+    is_male: Mapped[bool] = mapped_column()
