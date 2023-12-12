@@ -6,12 +6,18 @@ from sqlalchemy.orm import Session
 
 from data.common.RoleData import RoleData
 from data.db.entities.Role import Role
+from data.services.RolesRepository import RolesRepository
 
 
-class MySqlRolesRepository:
+class MySqlRolesRepository(RolesRepository):
 
     def __init__(self, engine: Engine):
         self.engine = engine
+
+    def get_role_by_name(self, role_name: str) -> RoleData:
+        with Session(self.engine) as session:
+            found_role = session.scalars(select(Role).where(Role.id == role_name)).one()
+            return found_role
 
     def create_role(self, role_name: str) -> NoReturn:
         with Session(self.engine) as session:
@@ -32,7 +38,7 @@ class MySqlRolesRepository:
                 all_roles.append(role_data)
             return all_roles
 
-    def delete_user(self, role_id: int) -> NoReturn:
+    def delete_role(self, role_id: int) -> NoReturn:
         with Session(self.engine) as session:
             role = select(Role).where(Role.id == role_id)
             if role:

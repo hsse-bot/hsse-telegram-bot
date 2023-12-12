@@ -11,9 +11,10 @@ from data.common.UserData import UserData
 from data.common.UserDelta import UserDelta
 from data.db.entities.StudentInfo import StudentInfo
 from data.db.entities.User import User
+from data.services.UserRepository import UserRepository
 
 
-class MySqlUsersRepository:
+class MySqlUsersRepository(UserRepository):
 
     def __init__(self, engine: Engine):
         self.engine = engine
