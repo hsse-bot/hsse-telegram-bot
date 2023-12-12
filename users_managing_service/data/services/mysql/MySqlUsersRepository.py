@@ -72,30 +72,33 @@ class MySqlUsersRepository:
         self._assign_student_info(user.student_info, user_data.student_info)
         user_data.score = user.score
 
-    def _assign_student_info_delta(self, user_student_info: StudentInfo,
+    @staticmethod
+    def _assign_student_info_delta(user_student_info: StudentInfo,
                                    student_info_delta: StudentInfoDelta) -> NoReturn:
-        if (student_info_delta != None):
-            if (student_info_delta.new_room_number != None):
+        if student_info_delta is not None:
+            if student_info_delta.new_room_number is not None:
                 new_room_number = student_info_delta.new_room_number
                 user_student_info.room_number = new_room_number
-            if (student_info_delta.new_is_male != None):
+            if student_info_delta.new_is_male is not None:
                 new_is_male = student_info_delta.new_is_male
                 user_student_info.is_male = new_is_male
 
-    def _assign_student_info_data(self, user_student_info: StudentInfo, student_info: StudentInfoData) -> NoReturn:
-        if (student_info != None):
-            if (student_info.room_number != None):
+    @staticmethod
+    def _assign_student_info_data(user_student_info: StudentInfo, student_info: StudentInfoData) -> NoReturn:
+        if student_info is not None:
+            if student_info.room_number is not None:
                 room_number = student_info.room_number
                 user_student_info.room_number = room_number
-            if (student_info.is_male != None):
+            if student_info.is_male is not None:
                 is_male = student_info.is_male
                 user_student_info.is_male = is_male
 
-    def _assign_student_info(self, user_student_info: StudentInfo, user_data_student_info: StudentInfoData) -> NoReturn:
-        if (user_student_info != None):
-            if (user_student_info.room_number != None):
+    @staticmethod
+    def _assign_student_info(user_student_info: StudentInfo, user_data_student_info: StudentInfoData) -> NoReturn:
+        if user_student_info is not None:
+            if user_student_info.room_number is not None:
                 room_number = user_student_info.room_number
                 user_data_student_info.room_number = room_number
-            if (user_student_info.is_male != None):
+            if user_student_info.is_male is not None:
                 is_male = user_student_info.is_male
                 user_data_student_info.is_male = is_male
