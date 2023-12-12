@@ -1,15 +1,16 @@
 from typing import NoReturn, List
+
 from sqlalchemy import Engine
 from sqlalchemy import select
 from sqlalchemy import update
 from sqlalchemy.orm import Session
-from data.db.Base import Base
+
+from data.common.StudentInfoData import StudentInfoData
+from data.common.StudentInfoDelta import StudentInfoDelta
 from data.common.UserData import UserData
 from data.common.UserDelta import UserDelta
-from data.common.StudentInfoDelta import StudentInfoDelta
-from data.db.entities.User import User
 from data.db.entities.StudentInfo import StudentInfo
-from data.common.StudentInfoData import StudentInfoData
+from data.db.entities.User import User
 
 
 class MySqlUsersRepository:
