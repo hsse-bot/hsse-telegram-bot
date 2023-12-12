@@ -1,3 +1,4 @@
+
 import os
 from typing import Optional, List, NoReturn
 from data.db.entities.Ticket import Ticket

@@ -25,8 +25,8 @@ class TicketBuilder(BaseTicketBuilder):
         self._text = txt
         return self
 
-    def with_attachment(self, mime_type: str, path: str):
-        self._attachments.append(TicketAttachment(mime_type=mime_type, path=path))
+    def with_attachment(self, filename: str, mime_type: str):
+        self._attachments.append(TicketAttachment(mime_type=mime_type, filename=filename))
         return self
 
     def build(self) -> Ticket:
