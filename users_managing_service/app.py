@@ -33,6 +33,11 @@ def get_role():
     raise NotImplementedError()
 
 
+@app.get("/get-role-by-name")
+def get_role_by_name():
+    raise NotImplementedError()
+
+
 @app.get("/get-roles")
 def get_roles():
     raise NotImplementedError()
