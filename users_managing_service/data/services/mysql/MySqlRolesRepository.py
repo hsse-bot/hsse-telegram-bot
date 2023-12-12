@@ -7,7 +7,7 @@ from data.common.RoleData import RoleData
 from data.db.entities.Role import Role
 
 
-class MySqlRolesRepository(Base):
+class MySqlRolesRepository:
 
     def __init__(self, engine: Engine):
         self.engine = engine

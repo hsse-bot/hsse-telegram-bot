@@ -12,7 +12,7 @@ from data.db.entities.StudentInfo import StudentInfo
 from data.common.StudentInfoData import StudentInfoData
 
 
-class MySqlUsersRepository(Base):
+class MySqlUsersRepository:
 
     def __init__(self, engine: Engine):
         self.engine = engine
