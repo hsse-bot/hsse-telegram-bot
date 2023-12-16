@@ -69,35 +69,41 @@ def get_all_users():
     for user in users:
         users_dict.append(user.to_dict())
 
-    return jsonify(users)
+    return jsonify(users), 200
 
 
 @app.put("/update-user")
 def update_user():
-    json = request.json
+    try:
+        json = request.json
 
-    tg_id: int = int(request.args.get('tgId'))
-    user_delta: UserDelta = UserDelta(
-        new_name=json.get("newName"),
-        new_surname=json.get("newSurname"),
-        new_role_id=json.get("newRoleId"),
-        student_info_delta=None if "studentInfoDelta" not in json
-        else StudentInfoDelta(
-            new_is_male=json["studentInfoDelta"].get("newIsMale"),
-            new_room_number=json["studentInfoDelta"].get("newRoomNumber")
-        ),
-        new_score=json.get("newScore"),
-        delta_score=json.get("deltaScore")
-    )
+        tg_id: int = int(request.args.get('tgId'))
+        user_delta: UserDelta = UserDelta(
+            new_name=json.get("newName"),
+            new_surname=json.get("newSurname"),
+            new_role_id=json.get("newRoleId"),
+            student_info_delta=None if "studentInfoDelta" not in json
+            else StudentInfoDelta(
+                new_is_male=json["studentInfoDelta"].get("newIsMale"),
+                new_room_number=json["studentInfoDelta"].get("newRoomNumber")
+            ),
+            new_score=json.get("newScore"),
+            delta_score=json.get("deltaScore")
+        )
 
-    updated_user = user_repo.update_user(tg_id, user_delta)
+        updated_user = user_repo.update_user(tg_id, user_delta)
 
-    return jsonify(updated_user.to_dict()), 200
+        return jsonify(updated_user.to_dict()), 200
+    except NoResultFound:
+        return jsonify({
+            "msg": "User not found"
+        }), 400
 
 
 @app.delete("/delete-user")
 def delete_user():
-    raise NotImplementedError()
+    tg_id: int = int(request.args.get('tgId'))
+    user_repo.delete_user(tg_id)
 
 
 @app.get("/get-role")
