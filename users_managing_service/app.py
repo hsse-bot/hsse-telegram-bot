@@ -31,7 +31,16 @@ def create_user():
 
 @app.get("/get-user")
 def get_user():
-    raise NotImplementedError()
+    try:
+        tg_id: int = int(request.args.get('tgId'))
+        result = user_repo.get_user(tg_id)
+
+        if result:
+            return jsonify(result.to_dict())
+    except NoResultFound:
+        return jsonify({
+            "msg": "User not found"
+        }), 400
 
 
 @app.get("/get-all-users")
