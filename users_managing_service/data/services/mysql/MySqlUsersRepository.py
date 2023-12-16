@@ -70,8 +70,7 @@ class MySqlUsersRepository(UserRepository):
 
     def delete_user(self, tg_id: int) -> NoReturn:
         with Session(self.engine) as session:
-            user = select(User).where(User.tg_id == tg_id)
-            session.delete(user)
+            session.query(User).filter(User.tg_id == tg_id).delete()
             session.commit()
 
     def _assign_user_data(self, user, user_data) -> NoReturn:

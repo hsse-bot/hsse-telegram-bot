@@ -104,6 +104,7 @@ def update_user():
 def delete_user():
     tg_id: int = int(request.args.get('tgId'))
     user_repo.delete_user(tg_id)
+    return "", 200
 
 
 @app.get("/get-role")

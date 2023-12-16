@@ -16,7 +16,7 @@ class User(Base):
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"))
     student_info_id: Mapped[Optional[int]] = mapped_column(ForeignKey("student_additional_info.id"))
     role: Mapped["Role"] = relationship(
-        back_populates="users", cascade="all",
+        back_populates="users"
     )
     student_info: Mapped[Optional["StudentInfo"]] = relationship(
         back_populates="user", cascade="all"
