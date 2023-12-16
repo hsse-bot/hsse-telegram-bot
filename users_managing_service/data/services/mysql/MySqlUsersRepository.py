@@ -43,9 +43,7 @@ class MySqlUsersRepository(UserRepository):
         with Session(self.engine) as session:
             all_users = []
             for user in session.scalars(select(User)):
-                user_data = UserData()
-                self._assign_user_data(user, user_data)
-                all_users.append(user_data)
+                all_users.append(UserData.from_db_user(user))
             return all_users
 
     def update_user(self, tg_id: int, delta: UserDelta) -> NoReturn:

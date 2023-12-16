@@ -1,8 +1,11 @@
 import os
 
 from flask import Flask, request
+from flask import jsonify
 from sqlalchemy import Engine, create_engine
+from sqlalchemy.exc import NoResultFound
 
+from data.common.RoleData import RoleData
 from data.common.UserData import UserData
 from data.services.RolesRepository import RolesRepository
 from data.services.UserRepository import UserRepository
@@ -18,15 +21,20 @@ user_repo: UserRepository = MySqlUsersRepository(engine)
 
 @app.post("/create-user")
 def create_user():
-    deserialized = request.get_json()
+    json: dict = request.json
     
     user_data = UserData(
-        name=deserialized['name'],
-        surname=deserialized['surname'],
-        tg_id=deserialized['tg_id']
+        name=json['name'],
+        surname=json['surname'],
+        tg_id=json['tgId'],
+        role=RoleData(
+            id=json['roleId']
+        )
     )
-    
-    user_repo.create_user()
+
+    user_repo.create_user(user_data)
+
+    return 200
 
 
 @app.get("/get-user")
@@ -45,7 +53,13 @@ def get_user():
 
 @app.get("/get-all-users")
 def get_all_users():
-    raise NotImplementedError()
+    users = user_repo.get_all_users()
+    users_dict = []
+
+    for user in users:
+        users_dict.append(user.to_dict())
+
+    return jsonify(users)
 
 
 @app.put("/update-user")
