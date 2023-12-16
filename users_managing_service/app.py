@@ -1,11 +1,32 @@
-from flask import Flask
+import os
+
+from flask import Flask, request
+from sqlalchemy import Engine, create_engine
+
+from data.common.UserData import UserData
+from data.services.RolesRepository import RolesRepository
+from data.services.UserRepository import UserRepository
+from data.services.mysql.MySqlRolesRepository import MySqlRolesRepository
+from data.services.mysql.MySqlUsersRepository import MySqlUsersRepository
 
 app = Flask(__name__)
+
+engine: Engine = create_engine(os.environ.get('MYSQL_CONNECTION_STRING'))
+roles_repo: RolesRepository = MySqlRolesRepository(engine)
+user_repo: UserRepository = MySqlUsersRepository(engine)
 
 
 @app.post("/create-user")
 def create_user():
-    raise NotImplementedError()
+    deserialized = request.get_json()
+    
+    user_data = UserData(
+        name=deserialized['name'],
+        surname=deserialized['surname'],
+        tg_id=deserialized['tg_id']
+    )
+    
+    user_repo.create_user()
 
 
 @app.get("/get-user")
