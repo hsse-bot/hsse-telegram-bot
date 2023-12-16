@@ -3,7 +3,7 @@ import os
 from flask import Flask, request
 from flask import jsonify
 from sqlalchemy import Engine, create_engine
-from sqlalchemy.exc import NoResultFound
+from sqlalchemy.exc import NoResultFound, IntegrityError
 
 from data.common.RoleData import RoleData
 from data.common.UserData import UserData
@@ -21,20 +21,28 @@ user_repo: UserRepository = MySqlUsersRepository(engine)
 
 @app.post("/create-user")
 def create_user():
-    json: dict = request.json
-    
-    user_data = UserData(
-        name=json['name'],
-        surname=json['surname'],
-        tg_id=json['tgId'],
-        role=RoleData(
-            id=json['roleId']
+    try:
+        json: dict = request.json
+
+        user_data = UserData(
+            name=json['name'],
+            surname=json['surname'],
+            tg_id=json['tgId'],
+            role=RoleData(
+                id=json['roleId'],
+                name="None"
+            ),
+            student_info=None,
+            score=0
         )
-    )
 
-    user_repo.create_user(user_data)
+        user_repo.create_user(user_data)
 
-    return 200
+        return "", 200
+    except IntegrityError:
+        return jsonify({
+            "msg": "User already created with these parameters"
+        }), 400
 
 
 @app.get("/get-user")

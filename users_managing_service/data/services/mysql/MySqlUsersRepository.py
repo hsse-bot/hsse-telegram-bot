@@ -25,9 +25,6 @@ class MySqlUsersRepository(UserRepository):
                 surname=user_data.surname,
                 role_id=user_data.role.id,
                 tg_id=user_data.tg_id,
-                role=Role(
-                    id=user_data.role.id
-                ),
                 score=user_data.score
             )
             self._assign_student_info_data(user.student_info, user_data.student_info)
