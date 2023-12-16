@@ -9,8 +9,7 @@ from data.common.StudentInfoData import StudentInfoData
 from data.common.StudentInfoDelta import StudentInfoDelta
 from data.common.UserData import UserData
 from data.common.UserDelta import UserDelta
-from data.db.entities.StudentInfo import StudentInfo
-from data.db.entities.User import User
+from data.db.Entities import User, Role, StudentInfo
 from data.services.UserRepository import UserRepository
 
 
@@ -26,7 +25,9 @@ class MySqlUsersRepository(UserRepository):
                 surname=user_data.surname,
                 role_id=user_data.role.id,
                 tg_id=user_data.tg_id,
-                role=user_data.role,
+                role=Role(
+                    id=user_data.role.id
+                ),
                 score=user_data.score
             )
             self._assign_student_info_data(user.student_info, user_data.student_info)
@@ -36,7 +37,7 @@ class MySqlUsersRepository(UserRepository):
     def get_user(self, tg_id: int) -> UserData:
         with Session(self.engine) as session:
             found_user = session.scalars(select(User).where(User.tg_id == tg_id)).one()
-            return found_user
+            return UserData.from_db_user(found_user)
 
     def get_all_users(self) -> List[UserData]:
         with Session(self.engine) as session:

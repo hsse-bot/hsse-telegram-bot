@@ -5,7 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from data.common.RoleData import RoleData
-from data.db.entities.Role import Role
+from data.db.Entities import Role
 from data.services.RolesRepository import RolesRepository
 
 

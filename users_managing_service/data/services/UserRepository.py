@@ -10,7 +10,7 @@ class UserRepository(ABC):
         pass
 
     @abstractmethod
-    def get_user(self, tg_id: int):
+    def get_user(self, tg_id: int) -> UserData:
         pass
 
     @abstractmethod

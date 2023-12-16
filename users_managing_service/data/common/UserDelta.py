@@ -11,4 +11,5 @@ class UserDelta:
     new_role_id: Optional[int]
     student_info_delta: Optional[StudentInfoDelta]
     new_score: Optional[int]
+    delta_score: Optional[int]
     
