@@ -109,17 +109,39 @@ def delete_user():
 
 @app.get("/get-role")
 def get_role():
-    raise NotImplementedError()
+    try:
+        role_id: int = int(request.args.get('id'))
+        result = roles_repo.get_role(role_id)
+
+        return jsonify(result.to_dict()), 200
+    except NoResultFound:
+        return jsonify({
+            "msg": "Role not found"
+        }), 400
 
 
 @app.get("/get-role-by-name")
 def get_role_by_name():
-    raise NotImplementedError()
+    try:
+        role_id: int = int(request.args.get('name'))
+        result = roles_repo.get_role_by_name(role_id)
+
+        return jsonify(result.to_dict()), 200
+    except NoResultFound:
+        return jsonify({
+            "msg": "Role not found"
+        }), 400
 
 
 @app.get("/get-roles")
 def get_roles():
-    raise NotImplementedError()
+    roles = roles_repo.get_all_roles()
+    resp = []
+
+    for role in roles:
+        resp.append(role.to_dict())
+
+    return jsonify(resp), 200
 
 
 if __name__ == '__main__':
