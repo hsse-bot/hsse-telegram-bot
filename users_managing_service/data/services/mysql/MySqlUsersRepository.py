@@ -43,16 +43,30 @@ class MySqlUsersRepository(UserRepository):
                 all_users.append(UserData.from_db_user(user))
             return all_users
 
-    def update_user(self, tg_id: int, delta: UserDelta) -> NoReturn:
+    def update_user(self, tg_id: int, delta: UserDelta) -> UserData:
         with Session(self.engine) as session:
             user = session.query(User).filter(User.tg_id == tg_id)[0]
-            update(User).where(User.tg_id == tg_id).values(
-                name=delta.new_name if delta.new_name else user.name,
-                surname=delta.new_surname if delta.new_surname else user.surname,
-                role_id=delta.new_role_id if delta.new_role_id else user.role_id,
-                score=delta.new_score if delta.new_score else user.score
-            )
-            self._assign_student_info_delta(user.student_info, delta.student_info_delta)
+            session.query(User).filter(User.tg_id == tg_id).update({
+                "name": delta.new_name if delta.new_name else User.name,
+                "surname": delta.new_surname if delta.new_surname else User.surname,
+                "role_id": delta.new_role_id if delta.new_role_id else User.role_id,
+                "score": delta.delta_score + User.score if delta.delta_score
+                else delta.new_score
+                if delta.new_score else User.score
+            })
+
+            if delta.student_info_delta is not None:
+                if user.student_info is None:
+                    user.student_info = StudentInfo()
+
+                if delta.student_info_delta.new_is_male is not None:
+                    user.student_info.is_male = delta.student_info_delta.new_is_male
+
+                if delta.student_info_delta.new_room_number is not None:
+                    user.student_info.room_number = delta.student_info_delta.new_room_number
+
+            session.commit()
+            return UserData.from_db_user(user)
 
     def delete_user(self, tg_id: int) -> NoReturn:
         with Session(self.engine) as session:
@@ -68,17 +82,6 @@ class MySqlUsersRepository(UserRepository):
         user_data.role.name = user.role.role_name
         self._assign_student_info(user.student_info, user_data.student_info)
         user_data.score = user.score
-
-    @staticmethod
-    def _assign_student_info_delta(user_student_info: StudentInfo,
-                                   student_info_delta: StudentInfoDelta) -> NoReturn:
-        if student_info_delta is not None:
-            if student_info_delta.new_room_number is not None:
-                new_room_number = student_info_delta.new_room_number
-                user_student_info.room_number = new_room_number
-            if student_info_delta.new_is_male is not None:
-                new_is_male = student_info_delta.new_is_male
-                user_student_info.is_male = new_is_male
 
     @staticmethod
     def _assign_student_info_data(user_student_info: StudentInfo, student_info: StudentInfoData) -> NoReturn:
