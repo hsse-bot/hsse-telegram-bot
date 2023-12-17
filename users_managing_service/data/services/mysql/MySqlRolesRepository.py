@@ -4,8 +4,8 @@ from sqlalchemy import Engine
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from data.common.RoleDelta import RoleDelta
 from data.common.RoleData import RoleData
+from data.common.RoleDelta import RoleDelta
 from data.db.Entities import Role
 from data.services.RolesRepository import RolesRepository
 
