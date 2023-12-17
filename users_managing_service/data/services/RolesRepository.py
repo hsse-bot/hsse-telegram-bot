@@ -1,16 +1,31 @@
-from abc import ABC
+from abc import ABC, abstractmethod
+from typing import NoReturn
+
+from data.common.RoleData import RoleData
+from data.common.RoleDelta import RoleDelta
 
 
 class RolesRepository(ABC):
+    @abstractmethod
     def create_role(self, role_name: str) -> RoleData:
-        raise NotImplementedError()
-    
-    def delete_role(self, role_id: int):
-        raise NotImplementedError()
-    
-    def get_role(self, role_id: int):
-        raise NotImplementedError()
-    
+        pass
+
+    @abstractmethod
+    def delete_role(self, role_id: int) -> NoReturn:
+        pass
+
+    @abstractmethod
+    def get_role(self, role_id: int) -> RoleData:
+        pass
+
+    @abstractmethod
     def get_all_roles(self) -> list[RoleData]:
-        raise NotImplementedError()
-    
+        pass
+
+    @abstractmethod
+    def get_role_by_name(self, role_name: str) -> RoleData:
+        pass
+
+    @abstractmethod
+    def update_role(self, role_id: int, role_delta: RoleDelta) -> RoleData:
+        pass
