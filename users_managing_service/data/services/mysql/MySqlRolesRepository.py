@@ -4,6 +4,7 @@ from sqlalchemy import Engine
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from data.common.RoleDelta import RoleDelta
 from data.common.RoleData import RoleData
 from data.db.Entities import Role
 from data.services.RolesRepository import RolesRepository
@@ -44,3 +45,12 @@ class MySqlRolesRepository(RolesRepository):
             if role:
                 session.delete(role)
                 session.commit()
+
+    def update_role(self, role_id: int, role_delta: RoleDelta) -> RoleData:
+        with Session(self.engine) as session:
+            role = session.scalars(select(Role).where(Role.id == role_id)).one()
+
+            role.role_name = role_delta.new_name if role_delta.new_name is not None else role.role_name
+
+            session.commit()
+            return RoleData.from_db_role(role)

@@ -6,6 +6,7 @@ from sqlalchemy import Engine, create_engine
 from sqlalchemy.exc import NoResultFound, IntegrityError
 
 from data.common.RoleData import RoleData
+from data.common.RoleDelta import RoleDelta
 from data.common.StudentInfoDelta import StudentInfoDelta
 from data.common.UserData import UserData
 from data.common.UserDelta import UserDelta
@@ -142,6 +143,24 @@ def get_roles():
         resp.append(role.to_dict())
 
     return jsonify(resp), 200
+
+
+@app.put("/update-role")
+def update_role():
+    try:
+        role_id: int = int(request.args.get('id'))
+        json = request.json
+
+        delta = RoleDelta(
+            new_name=json.get("newName")
+        )
+        result = roles_repo.update_role(role_id, delta)
+
+        return jsonify(result.to_dict()), 200
+    except NoResultFound:
+        return jsonify({
+            "msg": "Role not found"
+        }), 200
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import NoReturn
 
 from data.common.RoleData import RoleData
+from data.common.RoleDelta import RoleDelta
 
 
 class RolesRepository(ABC):
@@ -24,4 +25,7 @@ class RolesRepository(ABC):
     @abstractmethod
     def get_role_by_name(self, role_name: str) -> RoleData:
         pass
-    
+
+    @abstractmethod
+    def update_role(self, role_id: int, role_delta: RoleDelta) -> RoleData:
+        pass
