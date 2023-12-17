@@ -145,6 +145,13 @@ def get_roles():
     return jsonify(resp), 200
 
 
+@app.delete("/delete-role")
+def delete_role():
+    role_id: int = int(request.args.get('id'))
+    roles_repo.delete_role(role_id)
+    return "", 200
+
+
 @app.put("/update-role")
 def update_role():
     try:

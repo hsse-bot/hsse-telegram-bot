@@ -41,10 +41,8 @@ class MySqlRolesRepository(RolesRepository):
 
     def delete_role(self, role_id: int) -> NoReturn:
         with Session(self.engine) as session:
-            role = select(Role).where(Role.id == role_id)
-            if role:
-                session.delete(role)
-                session.commit()
+            session.query(Role).filter(Role.id == role_id).delete()
+            session.commit()
 
     def update_role(self, role_id: int, role_delta: RoleDelta) -> RoleData:
         with Session(self.engine) as session:
