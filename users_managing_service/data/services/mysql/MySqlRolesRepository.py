@@ -1,16 +1,24 @@
 from typing import NoReturn, List
+
 from sqlalchemy import Engine
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-from data.db.Base import Base
+
 from data.common.RoleData import RoleData
-from data.db.entities.Role import Role
+from data.common.RoleDelta import RoleDelta
+from data.db.Entities import Role
+from data.services.RolesRepository import RolesRepository
 
 
-class MySqlRolesRepository(Base):
+class MySqlRolesRepository(RolesRepository):
 
     def __init__(self, engine: Engine):
         self.engine = engine
+
+    def get_role_by_name(self, role_name: str) -> RoleData:
+        with Session(self.engine) as session:
+            found_role = session.scalars(select(Role).where(Role.role_name == role_name)).one()
+            return RoleData.from_db_role(found_role)
 
     def create_role(self, role_name: str) -> NoReturn:
         with Session(self.engine) as session:
@@ -21,7 +29,7 @@ class MySqlRolesRepository(Base):
     def get_role(self, role_id: int) -> RoleData:
         with Session(self.engine) as session:
             found_role = session.scalars(select(Role).where(Role.id == role_id)).one()
-            return found_role
+            return RoleData.from_db_role(found_role)
 
     def get_all_roles(self) -> List[RoleData]:
         with Session(self.engine) as session:
@@ -31,9 +39,16 @@ class MySqlRolesRepository(Base):
                 all_roles.append(role_data)
             return all_roles
 
-    def delete_user(self, role_id: int) -> NoReturn:
+    def delete_role(self, role_id: int) -> NoReturn:
         with Session(self.engine) as session:
-            role = select(Role).where(Role.id == role_id)
-            if role:
-                session.delete(role)
-                session.commit()
+            session.query(Role).filter(Role.id == role_id).delete()
+            session.commit()
+
+    def update_role(self, role_id: int, role_delta: RoleDelta) -> RoleData:
+        with Session(self.engine) as session:
+            role = session.scalars(select(Role).where(Role.id == role_id)).one()
+
+            role.role_name = role_delta.new_name if role_delta.new_name is not None else role.role_name
+
+            session.commit()
+            return RoleData.from_db_role(role)
