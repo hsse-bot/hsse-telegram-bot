@@ -123,7 +123,7 @@ def get_role():
 @app.get("/get-role-by-name")
 def get_role_by_name():
     try:
-        role_id: int = int(request.args.get('name'))
+        role_id: str = request.args.get('name')
         result = roles_repo.get_role_by_name(role_id)
 
         return jsonify(result.to_dict()), 200

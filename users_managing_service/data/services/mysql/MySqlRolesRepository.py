@@ -16,8 +16,8 @@ class MySqlRolesRepository(RolesRepository):
 
     def get_role_by_name(self, role_name: str) -> RoleData:
         with Session(self.engine) as session:
-            found_role = session.scalars(select(Role).where(Role.id == role_name)).one()
-            return found_role
+            found_role = session.scalars(select(Role).where(Role.role_name == role_name)).one()
+            return RoleData.from_db_role(found_role)
 
     def create_role(self, role_name: str) -> NoReturn:
         with Session(self.engine) as session:
@@ -28,7 +28,7 @@ class MySqlRolesRepository(RolesRepository):
     def get_role(self, role_id: int) -> RoleData:
         with Session(self.engine) as session:
             found_role = session.scalars(select(Role).where(Role.id == role_id)).one()
-            return found_role
+            return RoleData.from_db_role(found_role)
 
     def get_all_roles(self) -> List[RoleData]:
         with Session(self.engine) as session:
