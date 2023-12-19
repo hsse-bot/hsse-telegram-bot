@@ -8,7 +8,7 @@ from aiogram import Router
 
 from telegram_interactions_service.states.notify_service_states import NotifySendTextForm, CreateCategoryForm
 from telegram_interactions_service.misc import dataclasses, constants, message_templates
-from telegram_interactions_service.middlewares.admin_middleware import IsAdminMiddleware
+from telegram_interactions_service.middlewares import IsAdminMiddleware
 from telegram_interactions_service.keyboards.inline import admin
 from telegram_interactions_service.services_interactions.telegram_notifier_service import \
     TelegramNotifierServiceInteraction

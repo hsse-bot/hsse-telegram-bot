@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
 
 from telegram_interactions_service.exceptions import BadRegistrationInput, EmailAlreadyUsed
-from telegram_interactions_service.middlewares.registration_middleware import IsUnregisteredMiddleware
+from telegram_interactions_service.middlewares import IsUnregisteredMiddleware
 from telegram_interactions_service.misc import message_templates
 from telegram_interactions_service.misc.dataclasses import RegistrationUserData
 from telegram_interactions_service.services_interactions.user_managing_service import UserManagingServiceInteraction

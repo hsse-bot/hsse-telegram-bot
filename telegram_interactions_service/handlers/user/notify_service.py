@@ -7,7 +7,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram import Router
 
 from telegram_interactions_service.misc import dataclasses, constants
-from telegram_interactions_service.middlewares.registration_middleware import IsRegisteredMiddleware
+from telegram_interactions_service.middlewares import IsRegisteredMiddleware
 from telegram_interactions_service.keyboards.inline import user
 from telegram_interactions_service.services_interactions.telegram_notifier_service import \
     TelegramNotifierServiceInteraction

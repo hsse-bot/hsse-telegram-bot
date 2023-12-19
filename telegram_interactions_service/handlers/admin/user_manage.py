@@ -3,7 +3,7 @@ from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram import Router
 
-from telegram_interactions_service.middlewares.admin_middleware import IsAdminMiddleware
+from telegram_interactions_service.middlewares import IsAdminMiddleware
 
 user_manage_router = Router()
 
