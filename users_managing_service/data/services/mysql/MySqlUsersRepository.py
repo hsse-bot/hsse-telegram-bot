@@ -7,17 +7,36 @@ from sqlalchemy.orm import Session
 from data.common.StudentInfoData import StudentInfoData
 from data.common.UserData import UserData
 from data.common.UserDelta import UserDelta
-from data.db.Entities import User, StudentInfo
+from data.db.Entities import User, StudentInfo, BannedUser
 from data.services.UserRepository import UserRepository
 
 
-class MySqlUsersRepository(UserRepository):
+class UserBannedException(Exception):
+    pass
 
+
+# noinspection PyUnreachableCode
+class MySqlUsersRepository(UserRepository):
     def __init__(self, engine: Engine):
         self.engine = engine
 
+    def unban_user(self, tg_id: int):
+        with Session(self.engine) as session:
+            session.query(BannedUser).filter(BannedUser.tg_id == tg_id).delete()
+            session.commit()
+
+    def ban_user(self, tg_id: int) -> NoReturn:
+        self.delete_user(tg_id)
+
+        with Session(self.engine) as session:
+            session.add(BannedUser(tg_id=tg_id))
+            session.commit()
+
     def create_user(self, user_data: UserData) -> NoReturn:
         with Session(self.engine) as session:
+            if session.query(BannedUser).filter(BannedUser.tg_id == user_data.tg_id).count() > 0:
+                raise UserBannedException()
+
             user = User(
                 name=user_data.name,
                 surname=user_data.surname,
@@ -28,6 +47,10 @@ class MySqlUsersRepository(UserRepository):
             self._assign_student_info_data(user.student_info, user_data.student_info)
             session.add(user)
             session.commit()
+
+    def is_user_banned(self, tg_id: int) -> bool:
+        with Session(self.engine) as session:
+            return session.query(BannedUser).filter(BannedUser.tg_id == tg_id).count() > 0
 
     def get_user(self, tg_id: int) -> UserData:
         with Session(self.engine) as session:

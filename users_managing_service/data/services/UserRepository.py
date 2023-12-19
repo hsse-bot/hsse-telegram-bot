@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import NoReturn
 
 from data.common.UserData import UserData
 from data.common.UserDelta import UserDelta
@@ -6,7 +7,19 @@ from data.common.UserDelta import UserDelta
 
 class UserRepository(ABC):
     @abstractmethod
-    def create_user(self, user: UserData):
+    def create_user(self, user: UserData) -> NoReturn:
+        pass
+
+    @abstractmethod
+    def ban_user(self, tg_id: int) -> NoReturn:
+        pass
+
+    @abstractmethod
+    def unban_user(self, tg_id: int) -> NoReturn:
+        pass
+
+    @abstractmethod
+    def is_user_banned(self, tg_id: int) -> bool:
         pass
 
     @abstractmethod
@@ -22,5 +35,5 @@ class UserRepository(ABC):
         pass
 
     @abstractmethod
-    def delete_user(self, tg_id: int):
+    def delete_user(self, tg_id: int) -> NoReturn:
         pass
