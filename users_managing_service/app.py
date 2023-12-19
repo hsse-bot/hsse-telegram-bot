@@ -14,6 +14,7 @@ from data.services.RolesRepository import RolesRepository
 from data.services.UserRepository import UserRepository
 from data.services.mysql.MySqlRolesRepository import MySqlRolesRepository
 from data.services.mysql.MySqlUsersRepository import MySqlUsersRepository
+from data.services.mysql.MySqlUsersRepository import UserBannedException
 
 app = Flask(__name__)
 
@@ -45,6 +46,10 @@ def create_user():
     except IntegrityError:
         return jsonify({
             "msg": "User already created with these parameters"
+        }), 400
+    except UserBannedException:
+        return jsonify({
+            "msg": "User banned"
         }), 400
 
 
@@ -168,6 +173,39 @@ def update_role():
         return jsonify({
             "msg": "Role not found"
         }), 200
+
+
+@app.post("/ban-user")
+def ban_user():
+    try:
+        tg_id = int(request.args.get('tg_id'))
+        user_repo.ban_user(tg_id)
+
+        return "", 200
+    except IntegrityError:
+        return jsonify({
+            "msg": "User already banned"
+        }), 200
+
+
+@app.delete("/unban-user")
+def unban_user():
+    try:
+        tg_id = int(request.args.get('tg_id'))
+        user_repo.unban_user(tg_id)
+
+        return "", 200
+    except IntegrityError:
+        return jsonify({
+            "msg": "User already banned"
+        }), 200
+
+
+@app.get("/is-user-banned")
+def is_user_banned():
+    tg_id = int(request.args.get('tg_id'))
+    return user_repo.is_user_banned(tg_id), 200
+
 
 
 if __name__ == '__main__':

@@ -10,11 +10,13 @@ from data.db.Base import Base
 class User(Base):
     __tablename__ = "users"
 
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     name: Mapped[str] = mapped_column(String(32))
     surname: Mapped[str] = mapped_column(String(32))
     role_id: Mapped[int] = mapped_column()
     student_info_id: Mapped[Optional[int]] = mapped_column()
-    tg_id: Mapped[int] = mapped_column(primary_key=True)
+    tg_id: Mapped[int] = mapped_column(unique=True)
+    email: Mapped[str] = mapped_column(String(256))
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"))
     student_info_id: Mapped[Optional[int]] = mapped_column(ForeignKey("student_additional_info.id"))
     role: Mapped["Role"] = relationship(
@@ -24,6 +26,13 @@ class User(Base):
         back_populates="user", cascade="all"
     )
     score: Mapped[int] = mapped_column()
+
+
+class BannedUser(Base):
+    __tablename__ = "banned_users"
+
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    tg_id: Mapped[int] = mapped_column(unique=True)
 
 
 class Role(Base):
