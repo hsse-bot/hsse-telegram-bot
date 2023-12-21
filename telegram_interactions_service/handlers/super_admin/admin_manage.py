@@ -27,11 +27,26 @@ async def call_super_admin_menu(callback: CallbackQuery):
 @super_admin_manage_router.callback_query(super_admin.SuperAdminMainMenuKb.filter(F.action == "/admins"))
 async def call_admins(callback: CallbackQuery):
     admins = await UserManagingServiceInteraction().get_admins()
-    await callback.message.edit_text("Все админы", reply_markup=super_admin.super_admins_paginator(admins, page=0))
+    if len(admins) == 0:
+        await callback.message.edit_text(f"Пока что нет админов",
+                                         reply_markup=super_admin.super_return_menu_kb())
+        await callback.answer()
+        return
+    max_page = (len(admins) - 1) // constants.MAX_ADMINS_PER_PAGE
+    await callback.message.edit_text(f"Админы: {1}/{max_page + 1}",
+                                     reply_markup=super_admin.super_admins_paginator(admins, page=0))
 
 
-@super_admin_manage_router.callback_query(super_admin.AdminsKb.filter(F.action.in_(["/prev", "/next"])))
-async def call_categories_pagination_handler(callback: CallbackQuery, callback_data: super_admin.AdminsKb):
+@super_admin_manage_router.callback_query(super_admin.AdminsKb.filter(F.action.startswith("/id/")))
+async def call_admin_handler(callback: CallbackQuery, callback_data: super_admin.AdminsKb):
+    admin_id = int(callback_data.action[4:])
+    await callback.message.edit_text(f"Админ с id {admin_id}",
+                                     reply_markup=super_admin.super_admin_edit_kb(admin_id, callback_data.page))
+    await callback.answer()
+
+
+@super_admin_manage_router.callback_query(super_admin.AdminsKb.filter(F.action == "/"))
+async def call_admins_handler(callback: CallbackQuery, callback_data: super_admin.AdminsKb):
     try:
         admins = await UserManagingServiceInteraction().get_admins()
     except Exception as error:
@@ -46,21 +61,42 @@ async def call_categories_pagination_handler(callback: CallbackQuery, callback_d
         await callback.answer()
         return
     max_page, cur_page = (len(admins) - 1) // constants.MAX_ADMINS_PER_PAGE, int(callback_data.page)
-    next_categories_page = cur_page
+    await callback.message.edit_text(text=f"Админы: {cur_page + 1}/{max_page + 1}",
+                                     reply_markup=super_admin.super_admins_paginator(admins, callback_data.page))
+    await callback.answer()
+
+
+@super_admin_manage_router.callback_query(super_admin.AdminsKb.filter(F.action.in_(["/prev", "/next"])))
+async def call_admins_pagination_handler(callback: CallbackQuery, callback_data: super_admin.AdminsKb):
+    try:
+        admins = await UserManagingServiceInteraction().get_admins()
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await callback.message.edit_text(message_templates.error_admin_text,
+                                         reply_markup=super_admin.super_admin_main_kb())
+        await callback.answer()
+        return
+    if len(admins) == 0:
+        await callback.message.edit_text(f"Пока что нет админов",
+                                         reply_markup=super_admin.super_return_menu_kb())
+        await callback.answer()
+        return
+    max_page, cur_page = (len(admins) - 1) // constants.MAX_ADMINS_PER_PAGE, int(callback_data.page)
+    next_admins_page = cur_page
     if callback_data.action == "/next":
         if cur_page == max_page:
             await callback.answer()
             return
-        next_categories_page = cur_page + 1 if cur_page < max_page else cur_page
+        next_admins_page = cur_page + 1 if cur_page < max_page else cur_page
     elif callback_data.action == "/prev":
         if cur_page == 0:
             await callback.message.edit_text("Меню супер админа",
                                              reply_markup=super_admin.super_admin_main_kb())
             await callback.answer()
             return
-        next_categories_page = cur_page - 1
-    await callback.message.edit_text(text=f"Админы: {next_categories_page + 1}/{max_page + 1}",
-                                     reply_markup=super_admin.super_admins_paginator(admins, next_categories_page))
+        next_admins_page = cur_page - 1
+    await callback.message.edit_text(text=f"Админы: {next_admins_page + 1}/{max_page + 1}",
+                                     reply_markup=super_admin.super_admins_paginator(admins, next_admins_page))
     await callback.answer()
 
 

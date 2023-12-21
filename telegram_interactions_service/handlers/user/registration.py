@@ -23,7 +23,7 @@ async def call_cancel(callback: CallbackQuery, state: FSMContext) -> NoReturn:
         await callback.answer()
         return
     await state.clear()
-    await callback.message.answer("Регистрация прервана!")
+    await callback.message.edit_text("Регистрация прервана!")
     await callback.answer()
 
 
@@ -32,8 +32,6 @@ async def cmd_reg(message: Message, state: FSMContext) -> NoReturn:
     current_state = await state.get_state()
     if current_state is not None:
         await state.clear()
-        await message.answer("Вы прервали регистрацию! Нажмите /reg, чтобы начать регистрацию заново")
-        return
     await message.answer("Привет! Введите ваше имя:", reply_markup=user.cancel_registration_kb())
     await state.set_state(RegistrationForm.name)
 
@@ -54,6 +52,12 @@ async def receive_surname(message: Message, state: FSMContext) -> NoReturn:
 
 @registration_router.message(RegistrationForm.group)
 async def receive_group(message: Message, state: FSMContext) -> NoReturn:
+    try:
+        RegistrationUserData.validate_group(message.text)
+    except BadRegistrationInput as er:
+        await message.answer("Вы ввели группу в неверном формате! Пройдите регистрацию заново! /reg")
+        await state.clear()
+        return
     await state.update_data(group=message.text)
     await state.set_state(RegistrationForm.email_address)
     await message.answer("Введите свою электронную почту физтеха:", reply_markup=user.cancel_registration_kb())
@@ -61,6 +65,12 @@ async def receive_group(message: Message, state: FSMContext) -> NoReturn:
 
 @registration_router.message(RegistrationForm.email_address)
 async def receive_email_address(message: Message, state: FSMContext) -> NoReturn:
+    try:
+        RegistrationUserData.validate_email(message.text)
+    except BadRegistrationInput as er:
+        await message.answer("Вы ввели email в неверном формате! Пройдите регистрацию заново! /reg")
+        await state.clear()
+        return
     await state.update_data(email_address=message.text)
     user_registration_data = await state.get_data()
     await state.set_state(RegistrationForm.confirm_data)
@@ -68,7 +78,7 @@ async def receive_email_address(message: Message, state: FSMContext) -> NoReturn
                          f"Имя: {user_registration_data['name']}\n"
                          f"Фамилия: {user_registration_data['surname']}\n"
                          f"Группа: {user_registration_data['group']}\n"
-                         f"Элекстронная почта физтеха: {user_registration_data['email_address']}",
+                         f"Электронная почта физтеха: {user_registration_data['email_address']}",
                          reply_markup=user.confirm_registration_kb())
 
 
@@ -76,14 +86,14 @@ async def receive_email_address(message: Message, state: FSMContext) -> NoReturn
 async def call_confirm_registration_data(callback: CallbackQuery, state: FSMContext) -> NoReturn:
     current_state = await state.get_state()
     if current_state is None:
-        await callback.answer()
+        await callback.message.delete()
         return
     user_data = await state.get_data()
     await state.clear()
     try:
         user_registration_data = RegistrationUserData(**user_data, tg_id=callback.from_user.id)
     except BadRegistrationInput as error:
-        await callback.message.answer("Данные введены в неверном формате! Пройдите регистрацию заново!")
+        await callback.message.answer("Данные введены в неверном формате! Пройдите регистрацию заново! /reg")
         await callback.answer()
         return
     try:
