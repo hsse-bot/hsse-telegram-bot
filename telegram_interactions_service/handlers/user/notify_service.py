@@ -18,9 +18,9 @@ notify_service_router = Router()
 logger = logging.getLogger(__name__)
 
 
-@notify_service_router.message(Command("notify_service"))
-async def cmd_notify_service(message: Message):
-    await message.answer("Меню уведомлений", reply_markup=user.user_notify_service_menu_kb())
+# @notify_service_router.message(Command("notify_service"))
+# async def cmd_notify_service(message: Message):
+#     await message.answer("Меню уведомлений", reply_markup=user.user_notify_service_menu_kb())
 
 
 @notify_service_router.callback_query(user.NotifyCategoriesKb.filter(F.action == "/"))

@@ -18,7 +18,9 @@ logger = logging.getLogger(__name__)
 
 
 @notify_service_router.message(Command("notify_service_admin"))
-async def cmd_notify_service(message: Message):
+async def cmd_notify_service(message: Message, state: FSMContext):
+    if await state.get_state() is not None:
+        await state.clear()
     await message.answer("Меню сервиса уведомлений", reply_markup=admin.admin_notify_service_menu_kb())
 
 

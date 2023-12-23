@@ -12,8 +12,16 @@ class Role(BaseModel):
 
 
 class StudentInfo(BaseModel):
-    room_number: int
-    is_male: bool
+    roomNumber: int
+    isMale: bool
+    groupNumber: str
+
+
+def generate_student_info(data: dict) -> StudentInfo:
+    return StudentInfo(roomNumber=data['roomNumber'],
+                       isMale=data['isMale'],
+                       groupNumber=data['groupNumber']
+                       )
 
 
 class User(BaseModel):
@@ -31,16 +39,25 @@ class Form(BaseModel):
 
 
 class StudentInfoDelta(BaseModel):
-    room_number: int
-    is_male: bool
+    newRoomNumber: int
+    newIsMale: bool
+    newGroupNumber: str
+
+
+def generate_delta_student_info(data: dict) -> StudentInfoDelta:
+    return StudentInfoDelta(newRoomNumber=data['roomNumber'],
+                            newIsMale=data['isMale'],
+                            new_groupNumber=data['newGroupNumber']
+                            )
 
 
 class UserDelta(BaseModel):
-    new_name: str
-    new_surname: str
-    new_role_id: int
-    student_info_delta: StudentInfoDelta
-    new_score: int
+    newName: str
+    newSurname: str
+    newRoleId: int
+    studentInfoDelta: StudentInfoDelta
+    newScore: int
+    deltaScore: int
 
 
 class FormTicket(BaseModel):
@@ -72,7 +89,7 @@ class Admin(BaseModel):
 class RegistrationUserData(BaseModel):
     name: str
     surname: str
-    group: str
+    # group: str
     email_address: str
     tg_id: int
 
@@ -90,12 +107,12 @@ class RegistrationUserData(BaseModel):
             raise BadRegistrationInput("Surname must contain only letters")
         return value
 
-    @validator("group")
-    @classmethod
-    def validate_group(cls, value: str) -> str:
-        if not bool(re.fullmatch(r'\w\d\d-\d\d\d', value)):
-            raise BadRegistrationInput("Group must be special format")
-        return value
+    # @validator("group")
+    # @classmethod
+    # def validate_group(cls, value: str) -> str:
+    #     if not bool(re.fullmatch(r'\w\d\d-\d\d\d', value)):
+    #         raise BadRegistrationInput("Group must be special format")
+    #     return value
 
     @validator("email_address")
     @classmethod
