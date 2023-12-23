@@ -14,6 +14,7 @@ class UserData:
     role: RoleData
     student_info: Optional[StudentInfoData]
     score: int
+    email: str
 
     def to_dict(self) -> dict:
         dict_user = {
@@ -21,7 +22,8 @@ class UserData:
             "surname": self.surname,
             "tgId": self.tg_id,
             "role": self.role.to_dict(),
-            "score": self.score
+            "score": self.score,
+            "email": self.email
         }
 
         if self.student_info is not None:
@@ -36,5 +38,6 @@ class UserData:
                         tg_id=user.tg_id,
                         role=RoleData.from_db_role(user.role),
                         score=user.score,
+                        email=user.email,
                         student_info=None if user.student_info is None
                         else StudentInfoData.from_db_student_info(user.student_info))
