@@ -94,7 +94,7 @@ def admin_return_notify_categories_kb() -> InlineKeyboardMarkup:
 def admin_cancel_creating_category() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="отмена", callback_data=NotifyCategoriesKb(action="/", page=0).pack()),
+        InlineKeyboardButton(text="Отмена", callback_data=NotifyCategoriesKb(action="/", page=0).pack()),
         width=1
     )
     return builder.as_markup()

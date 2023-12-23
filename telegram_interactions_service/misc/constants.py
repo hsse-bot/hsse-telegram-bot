@@ -3,7 +3,7 @@ from typing import Final
 MAX_CATEGORIES_PER_PAGE: Final[int] = 5
 MAX_CATEGORIES_CNT: Final[int] = 13
 MAX_ADMINS_PER_PAGE: Final[int] = 5
-SIZE_OF_USERS_TOP = 10
+SIZE_OF_USERS_TOP: Final[int] = 10
 
 USER_ROLE_NAME: Final[str] = "user"
 ADMIN_ROLE_NAME: Final[str] = "admin"
