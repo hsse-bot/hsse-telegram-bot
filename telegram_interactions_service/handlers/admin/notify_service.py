@@ -125,7 +125,7 @@ async def receive_notify_message_text(message: Message, state: FSMContext):
         await message.answer(message_templates.error_admin_text, reply_markup=admin.admin_notify_service_menu_kb())
         return
     await state.clear()
-    await message.answer(f"Вы успешно отправили текст «{message.text}»",
+    await message.answer(f"Вы успешно отправили текст {message.text}",
                          reply_markup=admin.admin_return_notify_categories_kb())
 
 
