@@ -15,12 +15,19 @@ from data.services.UserRepository import UserRepository
 from data.services.mysql.MySqlRolesRepository import MySqlRolesRepository
 from data.services.mysql.MySqlUsersRepository import MySqlUsersRepository
 from data.services.mysql.MySqlUsersRepository import UserBannedException
+from alembic.config import Config
+from alembic import command
 
 app = Flask(__name__)
 
 engine: Engine = create_engine(os.environ.get('MYSQL_CONNECTION_STRING'))
 roles_repo: RolesRepository = MySqlRolesRepository(engine)
 user_repo: UserRepository = MySqlUsersRepository(engine)
+
+
+def run_migrations():
+    alembic_cfg = Config("alembic.ini")
+    command.upgrade(alembic_cfg, "head")
 
 
 @app.post("/create-user")
@@ -37,13 +44,14 @@ def create_user():
                 name="None"
             ),
             student_info=None,
-            score=0
+            score=0,
+            email=json['email']
         )
 
         user_repo.create_user(user_data)
 
         return "", 200
-    except IntegrityError:
+    except IntegrityError as e:
         return jsonify({
             "msg": "User already created with these parameters"
         }), 400
@@ -204,9 +212,12 @@ def unban_user():
 @app.get("/is-user-banned")
 def is_user_banned():
     tg_id = int(request.args.get('tg_id'))
-    return user_repo.is_user_banned(tg_id), 200
 
+    return jsonify({
+        "isBanned": user_repo.is_user_banned(tg_id)
+    }), 200
 
 
 if __name__ == '__main__':
+    run_migrations()
     app.run()

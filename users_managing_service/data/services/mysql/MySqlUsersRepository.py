@@ -42,7 +42,8 @@ class MySqlUsersRepository(UserRepository):
                 surname=user_data.surname,
                 role_id=user_data.role.id,
                 tg_id=user_data.tg_id,
-                score=user_data.score
+                score=user_data.score,
+                email=user_data.email
             )
             self._assign_student_info_data(user.student_info, user_data.student_info)
             session.add(user)
@@ -85,6 +86,9 @@ class MySqlUsersRepository(UserRepository):
 
                 if delta.student_info_delta.new_room_number is not None:
                     user.student_info.room_number = delta.student_info_delta.new_room_number
+
+                if delta.student_info_delta.new_group_number is not None:
+                    user.student_info.group_number = delta.student_info_delta.new_group_number
 
             session.commit()
             return UserData.from_db_user(user)
