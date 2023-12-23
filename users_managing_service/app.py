@@ -34,7 +34,7 @@ def ensure_db_created():
 
 # Создание ролей по умолчанию
 def setup_roles_by_default():
-    all_roles_names = map(lambda r: r.name, roles_repo.get_all_roles())
+    all_roles_names = list(map(lambda r: r.name, roles_repo.get_all_roles()))
 
     for role_name in SYSTEM_ROLES:
         if role_name not in all_roles_names:
@@ -47,7 +47,6 @@ def run_migrations():
 
 
 def setup_database():
-    print("HELLO")
     ensure_db_created()
     run_migrations()
     setup_roles_by_default()
