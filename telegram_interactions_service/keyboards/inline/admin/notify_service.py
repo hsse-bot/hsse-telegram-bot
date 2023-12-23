@@ -73,10 +73,28 @@ def admin_notify_service_menu_kb() -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
+def admin_cancel_sending_message_category() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="отмена", callback_data=NotifyCategoriesKb(action="/", page=0).pack()),
+        width=1
+    )
+    return builder.as_markup()
+
+
 def admin_return_notify_categories_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
         InlineKeyboardButton(text="🔼", callback_data=NotifyCategoriesKb(action="/", page=0).pack()),
+        width=1
+    )
+    return builder.as_markup()
+
+
+def admin_cancel_creating_category() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="Отмена", callback_data=NotifyCategoriesKb(action="/", page=0).pack()),
         width=1
     )
     return builder.as_markup()

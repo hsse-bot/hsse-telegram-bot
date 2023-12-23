@@ -18,9 +18,9 @@ notify_service_router = Router()
 logger = logging.getLogger(__name__)
 
 
-@notify_service_router.message(Command("notify_service"))
-async def cmd_notify_service(message: Message):
-    await message.answer("Меню уведомлений", reply_markup=user.user_notify_service_menu_kb())
+# @notify_service_router.message(Command("notify_service"))
+# async def cmd_notify_service(message: Message):
+#     await message.answer("Меню уведомлений", reply_markup=user.user_notify_service_menu_kb())
 
 
 @notify_service_router.callback_query(user.NotifyCategoriesKb.filter(F.action == "/"))
@@ -86,7 +86,6 @@ async def call_category_handler(callback: CallbackQuery, callback_data: user.Not
         category_id = int(callback_data.action[8:])
         try:
             await TelegramNotifierServiceInteraction().sub_user_to_category(callback.from_user.id, category_id)
-            category = await TelegramNotifierServiceInteraction().get_category(category_id)
         except Exception as error:
             logger.log(level=logging.ERROR, msg=error, exc_info=True)
             await callback.message.edit_text(message_templates.error_fail_to_sub_category_text,
@@ -95,14 +94,11 @@ async def call_category_handler(callback: CallbackQuery, callback_data: user.Not
             return
         await call_categories_pagination_handler(callback, callback_data)
         return
-        # await callback.message.edit_text(f"Вы успешно подписались на уведомления {category.name}",
-        #                                  reply_markup=user.user_return_notify_categories_kb())
-        # await callback.answer()
+
     elif callback_data.action.startswith("/id/unsub/"):
         category_id = int(callback_data.action[10:])
         try:
             await TelegramNotifierServiceInteraction().unsub_user_to_category(callback.from_user.id, category_id)
-            category = await TelegramNotifierServiceInteraction().get_category(category_id)
         except Exception as error:
             logger.log(level=logging.ERROR, msg=error, exc_info=True)
             await callback.message.edit_text(message_templates.error_fail_to_unsub_category_text,
@@ -110,10 +106,6 @@ async def call_category_handler(callback: CallbackQuery, callback_data: user.Not
             await callback.answer()
             return
         await call_categories_pagination_handler(callback, callback_data)
-        # return
-        # await callback.message.edit_text(f"Вы успешно отписались от уведомлений категории {category.name}",
-        #                                  reply_markup=user.user_return_notify_categories_kb())
-        # await callback.answer()
     else:
         logger.log(level=logging.ERROR, msg=f"unknown action '{callback_data.action}'")
 

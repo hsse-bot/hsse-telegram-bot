@@ -6,34 +6,9 @@ from ..misc.dataclasses import (
 )
 
 
-
 class UserManagingServiceInteractionInterface(ABC):
     @abstractmethod
     async def get_role_id(self, role_name: str) -> int:
-        pass
-
-    @abstractmethod
-    async def add_user_to_database(self, user: RegistrationUserData) -> NoReturn:
-        pass
-
-    @abstractmethod
-    async def set_user_role(self, user: User, new_role: Role) -> NoReturn:
-        pass
-
-    @abstractmethod
-    async def add_admin(self, user: Admin) -> NoReturn:
-        pass
-
-    @abstractmethod
-    async def get_admins(self) -> List[Admin]:
-        pass
-
-    @abstractmethod
-    async def update_user(self, user: User, new_user_data: UserDelta) -> NoReturn:
-        pass
-
-    @abstractmethod
-    async def get_top_scores(self) -> List[User] | None:
         pass
 
     @abstractmethod
@@ -41,7 +16,59 @@ class UserManagingServiceInteractionInterface(ABC):
         pass
 
     @abstractmethod
+    async def get_all_users(self) -> List[User]:
+        pass
+
+    @abstractmethod
+    async def add_user_to_database(self, user: RegistrationUserData) -> NoReturn:
+        pass
+
+    @abstractmethod
+    async def update_user(self, tg_id: int, new_user_data: UserDelta) -> NoReturn:
+        pass
+
+    @abstractmethod
+    async def delete_user(self, tg_id: int) -> NoReturn:
+        pass
+
+    @abstractmethod
+    async def set_role(self, tg_id: int, new_role_id: int) -> NoReturn:
+        pass
+
+    @abstractmethod
+    async def set_user_user_role(self, tg_id: int) -> NoReturn:
+        pass
+
+    @abstractmethod
+    async def set_user_admin_role(self, tg_id: int) -> NoReturn:
+        pass
+
+    @abstractmethod
     async def is_admin(self, tg_id: int) -> bool:
+        pass
+
+    @abstractmethod
+    async def get_admins(self) -> List[Admin]:
+        pass
+
+    @abstractmethod
+    async def get_top_scores(self) -> List[User] | None:
+        pass
+
+    @abstractmethod
+    async def add_activity_points(self, tg_id: int, points: int) -> NoReturn:
+        pass
+
+    @abstractmethod
+    async def ban_user(self, tg_id: int) -> NoReturn:
+        pass
+
+    @abstractmethod
+    async def is_banned(self, tg_id: int) -> bool:
+        pass
+
+    @abstractmethod
+    async def unban_user(self, tg_id: int) -> NoReturn:
         pass
 
 

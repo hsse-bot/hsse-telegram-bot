@@ -1,26 +1,33 @@
+import logging
+
 from aiogram import Router, F, Dispatcher
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, CallbackQuery
-from aiogram.filters import Command
-from aiogram import Router
-import logging
-from telegram_interactions_service.services_interactions.user_managing_service import UserManagingServiceInteraction
+
+from telegram_interactions_service.config import SUPER_ADMIN_TG_ID
+from telegram_interactions_service.keyboards.inline import super_admin
 from telegram_interactions_service.middlewares import IsSuperAdminMiddleware
 from telegram_interactions_service.misc import dataclasses, message_templates, constants
 from telegram_interactions_service.states.add_admin_states import AddAdminForm
-from telegram_interactions_service.keyboards.inline import super_admin
+from telegram_interactions_service.services_interactions.user_managing_service import UserManagingServiceInteraction
+
 
 super_admin_manage_router = Router()
 logger = logging.getLogger(__name__)
 
 
 @super_admin_manage_router.message(Command("super_admin"))
-async def super_admin_menu_cmd(message: Message):
+async def super_admin_menu_cmd(message: Message, state: FSMContext):
+    if await state.get_state() is not None:
+        await state.clear()
     await message.answer("Меню супер админа:", reply_markup=super_admin.super_admin_main_kb())
 
 
 @super_admin_manage_router.callback_query(super_admin.SuperAdminMainMenuKb.filter(F.action == "/"))
-async def call_super_admin_menu(callback: CallbackQuery):
+async def call_super_admin_menu(callback: CallbackQuery, state: FSMContext):
+    if await state.get_state() is not None:
+        await state.clear()
     await callback.message.edit_text("Меню супер админа", reply_markup=super_admin.super_admin_main_kb())
 
 
@@ -103,24 +110,29 @@ async def call_admins_pagination_handler(callback: CallbackQuery, callback_data:
 @super_admin_manage_router.callback_query(super_admin.SuperAdminMainMenuKb.filter(F.action == "/create_admin"))
 async def call_create_admin(callback: CallbackQuery, state: FSMContext):
     await state.set_state(AddAdminForm.tg_id)
-    await callback.message.answer("Введите его телеграмм айди:")
+    await callback.message.answer("Введите его телеграмм айди:",
+                                  reply_markup=super_admin.super_admin_cancel_to_main_menu_kb())
     await callback.answer()
 
 
 @super_admin_manage_router.message(AddAdminForm.tg_id)
 async def receive_admin_tg_id(message: Message):
     if len(message.text.split()) != 1 or not message.text.isdigit():
-        await message.answer("Неправильно указан id нового админа")
+        await message.answer("Неправильно указан id нового админа", reply_markup=super_admin.super_return_menu_kb())
         return
     try:
         new_admin = dataclasses.Admin(tg_id=int(message.text))
+        if new_admin.tg_id == SUPER_ADMIN_TG_ID:
+            await message.answer("Вы не можете сделать себя админом, вы супер админ",
+                                 reply_markup=super_admin.super_return_menu_kb())
+            return
         user_managing_service = UserManagingServiceInteraction()
-        await user_managing_service.add_admin(new_admin)
+        await user_managing_service.set_user_admin_role(new_admin.tg_id)
     except Exception as error:
         logger.log(level=logging.ERROR, msg=error, exc_info=True)
         await message.answer(message_templates.error_admin_text)
         return
-    await message.answer("Вы успешно добавили админа!")
+    await message.answer("Вы успешно добавили админа!", reply_markup=super_admin.super_return_menu_kb())
 
 
 def setup(*, dispatcher: Dispatcher):

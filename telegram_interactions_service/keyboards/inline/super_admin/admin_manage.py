@@ -62,6 +62,15 @@ def super_admin_edit_kb(admin_tg_id: int, page: int) -> InlineKeyboardMarkup:
     return builder.as_markup()
 
 
+def super_admin_cancel_to_main_menu_kb() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="Отмена", callback_data=SuperAdminMainMenuKb(action="/").pack()),
+        width=1
+    )
+    return builder.as_markup()
+
+
 def super_return_menu_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
