@@ -23,7 +23,7 @@ async def cmd_notify_service(message: Message):
 
 
 @notify_service_router.callback_query(admin.NotifyServiceMenuKb.filter(F.action == "/"))
-async def call_categories_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoriesKb, state: FSMContext):
+async def call_notify_menu_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoriesKb, state: FSMContext):
     if await state.get_state() is not None:
         await state.clear()
     await callback.message.edit_text("Меню сервиса уведомлений", reply_markup=admin.admin_notify_service_menu_kb())

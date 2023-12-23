@@ -6,3 +6,4 @@ class RegistrationForm(StatesGroup):
     surname = State()
     group = State()
     email_address = State()
+    confirm_data = State()

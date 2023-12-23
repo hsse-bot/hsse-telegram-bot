@@ -4,7 +4,7 @@ import aiohttp
 
 from ..config import DEBUG_MODE
 from telegram_interactions_service.services_interactions import interactions_interfaces
-from ..misc.dataclasses import User, Form, Role, StudentInfo, UserDelta, FormTicket, RegistrationUserData
+from ..misc.dataclasses import User, Form, Role, StudentInfo, UserDelta, FormTicket, RegistrationUserData, Admin
 from .paths import user_service_api_url
 from ..exceptions import UserManagingServiceError
 
@@ -26,8 +26,14 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
                 if response.status != 200:
                     raise UserManagingServiceError(f'response status is {response.status} (not 200)')
 
-    async def add_admin(self, user: User) -> NoReturn:
+    async def add_admin(self, user: Admin) -> NoReturn:
         pass
+
+    async def get_admins(self) -> List[Admin]:
+        if DEBUG_MODE:
+            admins = [Admin(tg_id=595905860, note="Тестовый")]
+            return admins
+        raise Exception('this method is not finished')
 
     async def set_user_role(self, user: User, new_role: Role) -> NoReturn:
         pass
