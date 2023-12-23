@@ -86,6 +86,9 @@ class MySqlUsersRepository(UserRepository):
                 if delta.student_info_delta.new_room_number is not None:
                     user.student_info.room_number = delta.student_info_delta.new_room_number
 
+                if delta.student_info_delta.new_group_number is not None:
+                    user.student_info.group_number = delta.student_info_delta.new_group_number
+
             session.commit()
             return UserData.from_db_user(user)
 
