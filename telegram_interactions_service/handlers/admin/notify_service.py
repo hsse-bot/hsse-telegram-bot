@@ -8,7 +8,7 @@ from aiogram import Router
 
 from telegram_interactions_service.states.notify_service_states import NotifySendTextForm, CreateCategoryForm
 from telegram_interactions_service.misc import dataclasses, constants, message_templates
-from telegram_interactions_service.middlewares.admin_middleware import IsAdminMiddleware
+from telegram_interactions_service.middlewares import IsAdminMiddleware
 from telegram_interactions_service.keyboards.inline import admin
 from telegram_interactions_service.services_interactions.telegram_notifier_service import \
     TelegramNotifierServiceInteraction
@@ -23,7 +23,7 @@ async def cmd_notify_service(message: Message):
 
 
 @notify_service_router.callback_query(admin.NotifyServiceMenuKb.filter(F.action == "/"))
-async def call_categories_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoriesKb):
+async def call_notify_menu_handler(callback: CallbackQuery, callback_data: admin.NotifyCategoriesKb):
     await callback.message.edit_text("Меню сервиса уведомлений", reply_markup=admin.admin_notify_service_menu_kb())
     await callback.answer()
 

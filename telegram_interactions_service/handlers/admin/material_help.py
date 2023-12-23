@@ -5,7 +5,7 @@ from aiogram import Router
 from aiogram.exceptions import TelegramBadRequest
 from contextlib import suppress
 
-from telegram_interactions_service.middlewares.admin_middleware import IsAdminMiddleware
+from telegram_interactions_service.middlewares import IsAdminMiddleware
 from telegram_interactions_service.keyboards.inline import admin
 
 material_help_router = Router()

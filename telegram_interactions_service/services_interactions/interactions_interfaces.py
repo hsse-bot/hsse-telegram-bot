@@ -1,7 +1,9 @@
 from abc import ABC, abstractmethod
 from typing import NoReturn, List
-from ..misc.dataclasses import User, Form, Role, UserDelta, FormTicket, MaterialHelpTicket, NotifyCategory, \
-    RegistrationUserData
+from ..misc.dataclasses import (
+    User, Form, Role, UserDelta, FormTicket, MaterialHelpTicket, NotifyCategory,
+    RegistrationUserData, Admin
+)
 
 
 
@@ -19,7 +21,11 @@ class UserManagingServiceInteractionInterface(ABC):
         pass
 
     @abstractmethod
-    async def add_admin(self, user: User) -> NoReturn:
+    async def add_admin(self, user: Admin) -> NoReturn:
+        pass
+
+    @abstractmethod
+    async def get_admins(self) -> List[Admin]:
         pass
 
     @abstractmethod

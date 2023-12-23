@@ -64,6 +64,11 @@ class NotifyCategory(BaseModel):
     name: str
 
 
+class Admin(BaseModel):
+    tg_id: int
+    note: str
+
+
 class RegistrationUserData(BaseModel):
     name: str
     surname: str
