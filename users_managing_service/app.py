@@ -6,6 +6,7 @@ from flask import Flask, request
 from flask import jsonify
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.exc import NoResultFound, IntegrityError
+from sqlalchemy_utils import database_exists, create_database
 
 from Constants import *
 from data.common.RoleData import RoleData
@@ -26,8 +27,14 @@ roles_repo: RolesRepository = MySqlRolesRepository(engine)
 user_repo: UserRepository = MySqlUsersRepository(engine)
 
 
+def ensure_db_created():
+    if not database_exists(engine.url):
+        create_database(engine.url)
+
+
+# Создание ролей по умолчанию
 def setup_roles_by_default():
-    all_roles_names = map(lambda r: r.name, roles_repo.get_all_roles())
+    all_roles_names = list(map(lambda r: r.name, roles_repo.get_all_roles()))
 
     for role_name in SYSTEM_ROLES:
         if role_name not in all_roles_names:
@@ -37,6 +44,12 @@ def setup_roles_by_default():
 def run_migrations():
     alembic_cfg = Config("alembic.ini")
     command.upgrade(alembic_cfg, "head")
+
+
+def setup_database():
+    ensure_db_created()
+    run_migrations()
+    setup_roles_by_default()
 
 
 @app.post("/create-user")
@@ -228,6 +241,5 @@ def is_user_banned():
 
 
 if __name__ == '__main__':
-    run_migrations()
-    setup_roles_by_default()
+    setup_database()
     app.run()
