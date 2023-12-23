@@ -1,10 +1,13 @@
 import os
 
+from alembic import command
+from alembic.config import Config
 from flask import Flask, request
 from flask import jsonify
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.exc import NoResultFound, IntegrityError
 
+from Constants import *
 from data.common.RoleData import RoleData
 from data.common.RoleDelta import RoleDelta
 from data.common.StudentInfoDelta import StudentInfoDelta
@@ -15,14 +18,20 @@ from data.services.UserRepository import UserRepository
 from data.services.mysql.MySqlRolesRepository import MySqlRolesRepository
 from data.services.mysql.MySqlUsersRepository import MySqlUsersRepository
 from data.services.mysql.MySqlUsersRepository import UserBannedException
-from alembic.config import Config
-from alembic import command
 
 app = Flask(__name__)
 
 engine: Engine = create_engine(os.environ.get('MYSQL_CONNECTION_STRING'))
 roles_repo: RolesRepository = MySqlRolesRepository(engine)
 user_repo: UserRepository = MySqlUsersRepository(engine)
+
+
+def setup_roles_by_default():
+    all_roles_names = map(lambda r: r.name, roles_repo.get_all_roles())
+
+    for role_name in SYSTEM_ROLES:
+        if role_name not in all_roles_names:
+            roles_repo.create_role(role_name)
 
 
 def run_migrations():
@@ -220,4 +229,5 @@ def is_user_banned():
 
 if __name__ == '__main__':
     run_migrations()
+    setup_roles_by_default()
     app.run()
