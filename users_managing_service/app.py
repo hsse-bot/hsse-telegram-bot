@@ -15,12 +15,19 @@ from data.services.UserRepository import UserRepository
 from data.services.mysql.MySqlRolesRepository import MySqlRolesRepository
 from data.services.mysql.MySqlUsersRepository import MySqlUsersRepository
 from data.services.mysql.MySqlUsersRepository import UserBannedException
+from alembic.config import Config
+from alembic import command
 
 app = Flask(__name__)
 
 engine: Engine = create_engine(os.environ.get('MYSQL_CONNECTION_STRING'))
 roles_repo: RolesRepository = MySqlRolesRepository(engine)
 user_repo: UserRepository = MySqlUsersRepository(engine)
+
+
+def run_migrations():
+    alembic_cfg = Config("alembic.ini")
+    command.upgrade(alembic_cfg, "head")
 
 
 @app.post("/create-user")
@@ -209,4 +216,5 @@ def is_user_banned():
 
 
 if __name__ == '__main__':
+    run_migrations()
     app.run()
