@@ -195,7 +195,7 @@ def update_role():
 @app.post("/ban-user")
 def ban_user():
     try:
-        tg_id = int(request.args.get('tg_id'))
+        tg_id = int(request.args.get('tgId'))
         user_repo.ban_user(tg_id)
 
         return "", 200
@@ -208,7 +208,7 @@ def ban_user():
 @app.delete("/unban-user")
 def unban_user():
     try:
-        tg_id = int(request.args.get('tg_id'))
+        tg_id = int(request.args.get('tgId'))
         user_repo.unban_user(tg_id)
 
         return "", 200
@@ -220,7 +220,7 @@ def unban_user():
 
 @app.get("/is-user-banned")
 def is_user_banned():
-    tg_id = int(request.args.get('tg_id'))
+    tg_id = int(request.args.get('tgId'))
 
     return jsonify({
         "isBanned": user_repo.is_user_banned(tg_id)
