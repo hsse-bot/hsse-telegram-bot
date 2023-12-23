@@ -44,13 +44,14 @@ def create_user():
                 name="None"
             ),
             student_info=None,
-            score=0
+            score=0,
+            email=json['email']
         )
 
         user_repo.create_user(user_data)
 
         return "", 200
-    except IntegrityError:
+    except IntegrityError as e:
         return jsonify({
             "msg": "User already created with these parameters"
         }), 400
@@ -211,8 +212,10 @@ def unban_user():
 @app.get("/is-user-banned")
 def is_user_banned():
     tg_id = int(request.args.get('tg_id'))
-    return user_repo.is_user_banned(tg_id), 200
 
+    return jsonify({
+        "isBanned": user_repo.is_user_banned(tg_id)
+    }), 200
 
 
 if __name__ == '__main__':
