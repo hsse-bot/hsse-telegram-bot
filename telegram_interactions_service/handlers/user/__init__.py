@@ -1,6 +1,6 @@
 from aiogram import Router, Dispatcher
 from typing import List
-from . import general, notify_service, registration, rating
+from . import general, notify_service, registration, rating, profile
 
 
 def setup(*, dispatcher: Dispatcher):
@@ -8,4 +8,5 @@ def setup(*, dispatcher: Dispatcher):
     # material_help.setup(dispatcher=dispatcher)
     notify_service.setup(dispatcher=dispatcher)
     rating.setup(dispatcher=dispatcher)
+    profile.setup(dispatcher=dispatcher)
     registration.setup(dispatcher=dispatcher)

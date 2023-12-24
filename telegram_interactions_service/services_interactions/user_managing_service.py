@@ -1,4 +1,5 @@
 from typing import NoReturn, List
+from json import loads
 
 import aiohttp
 
@@ -126,7 +127,7 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
             return
         async with aiohttp.ClientSession() as session:
             async with session.put(user_service_api_url + 'update-user', params={'tgId': tg_id},
-                                   json=new_user_data.model_dump_json()
+                                   json=loads(new_user_data.model_dump_json(exclude_none=True))
                                    # json={'newName': new_user_data.new_name, 'newSurname': new_user_data.new_surname,
                                    #       'newRoleId': new_user_data.new_role_id,
                                    #       'studentInfoDelta': {

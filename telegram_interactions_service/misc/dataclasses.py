@@ -1,8 +1,10 @@
-from pydantic import BaseModel, validator
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List
 import re
+from typing import List, Optional
+
+from pydantic import BaseModel, validator
+from pydantic_core import ValidationError
 from telegram_interactions_service.exceptions import BadRegistrationInput
 
 
@@ -12,9 +14,9 @@ class Role(BaseModel):
 
 
 class StudentInfo(BaseModel):
-    roomNumber: int
-    isMale: bool
-    groupNumber: str
+    roomNumber: int | None = None
+    isMale: bool | None = None
+    groupNumber: str | None = None
 
 
 def generate_student_info(data: dict) -> StudentInfo:
@@ -40,25 +42,33 @@ class Form(BaseModel):
 
 
 class StudentInfoDelta(BaseModel):
-    newRoomNumber: int
-    newIsMale: bool
-    newGroupNumber: str
+    newRoomNumber: int | None = None
+    newIsMale: bool | None = None
+    newGroupNumber: str | None = None
+
+    @validator("newGroupNumber")
+    @classmethod
+    def validate_group(cls, value: str) -> str:
+        if not bool(re.fullmatch(r'\w\d\d-\d\d\d', value)):
+            raise BadRegistrationInput("Group must be special format")
+        return value
 
 
 def generate_delta_student_info(data: dict) -> StudentInfoDelta:
-    return StudentInfoDelta(newRoomNumber=data['roomNumber'],
-                            newIsMale=data['isMale'],
-                            new_groupNumber=data['newGroupNumber']
-                            )
+    full_data = {}
+    for key in ['roomNumber', 'isMale', 'groupNumber']:
+        if key in data:
+            full_data['new' + key[0].upper() + key[1:]] = data[key]
+    return StudentInfoDelta(**full_data)
 
 
 class UserDelta(BaseModel):
-    newName: str
-    newSurname: str
-    newRoleId: int
-    studentInfoDelta: StudentInfoDelta
-    newScore: int
-    deltaScore: int
+    newName: str | None = None
+    newSurname: str | None = None
+    newRoleId: int | None = None
+    studentInfoDelta: StudentInfoDelta | None = None
+    newScore: int | None = None
+    deltaScore: int | None = None
 
 
 class FormTicket(BaseModel):

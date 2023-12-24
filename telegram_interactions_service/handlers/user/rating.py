@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 @rating_router.callback_query(user.UserMainMenuKb.filter(F.action == "/rating"))
-async def rating_handler(callback: CallbackQuery, callback_data: user.NotifyCategoriesKb):
+async def rating_handler(callback: CallbackQuery, callback_data: user.RatingMenuKb):
     top_users = await UserManagingServiceInteraction().get_top_scores()
     text = ''
     for number, user_in_top in enumerate(top_users):

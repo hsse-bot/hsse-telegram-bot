@@ -17,6 +17,7 @@ from telegram_interactions_service.keyboards.inline import user
 registration_router = Router()
 logger = logging.getLogger(__name__)
 
+
 @registration_router.callback_query(user.RegistrationKb.filter(F.action == "/cancel"))
 async def call_cancel(callback: CallbackQuery, state: FSMContext) -> NoReturn:
     current_state = await state.get_state()
