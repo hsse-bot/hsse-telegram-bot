@@ -17,7 +17,9 @@ def admin_main_kb() -> InlineKeyboardMarkup:
         width=2
     )
     builder.row(
-        InlineKeyboardButton(text="Пользователи", callback_data=AdminMainMenuKb(action="/get_users").pack())
+        InlineKeyboardButton(text="Пользователи", callback_data=AdminMainMenuKb(action="/get_users").pack()),
+        InlineKeyboardButton(text="Дать очки активизма", callback_data=AdminMainMenuKb(action="/give_points").pack()),
+        width=2
     )
     return builder.as_markup()
 

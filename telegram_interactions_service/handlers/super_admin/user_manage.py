@@ -17,7 +17,9 @@ logger = logging.getLogger(__name__)
 
 
 @super_user_manage_router.callback_query(super_admin.SuperAdminMainMenuKb.filter(F.action == "/users"))
-async def call_user_manage_manu(callback: CallbackQuery):
+async def call_user_manage_manu(callback: CallbackQuery, state: FSMContext):
+    if await state.get_state() is not None:
+        await state.clear()
     await callback.message.edit_text(text="Меню управления пользователями",
                                      reply_markup=super_admin.super_user_manage_menu_kb())
 
