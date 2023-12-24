@@ -113,6 +113,7 @@ async def call_create_admin(callback: CallbackQuery, state: FSMContext):
     await state.set_state(AddAdminForm.tg_id)
     await callback.message.answer("Введите его телеграмм айди:",
                                   reply_markup=super_admin.super_admin_cancel_to_main_menu_kb())
+    await callback.message.delete()
     await callback.answer()
 
 

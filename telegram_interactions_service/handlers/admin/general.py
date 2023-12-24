@@ -25,9 +25,9 @@ async def call_admin_menu(callback: CallbackQuery):
     await callback.message.edit_text("Админ панель", reply_markup=admin.admin_main_kb())
 
 
-@admin_general_router.callback_query(admin.AdminMainMenuKb.filter(F.action == "/material_help"))
-async def call_material_help_menu(callback: CallbackQuery):
-    await callback.message.edit_text("Меню сервиса матпомощи", reply_markup=admin.admin_material_help_menu_kb())
+# @admin_general_router.callback_query(admin.AdminMainMenuKb.filter(F.action == "/material_help"))
+# async def call_material_help_menu(callback: CallbackQuery):
+#     await callback.message.edit_text("Меню сервиса матпомощи", reply_markup=admin.admin_material_help_menu_kb())
 
 
 @admin_general_router.callback_query(admin.AdminMainMenuKb.filter(F.action == "/notify_service"))

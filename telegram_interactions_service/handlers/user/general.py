@@ -46,11 +46,6 @@ async def call_notify_service_menu(callback: CallbackQuery):
 #     await callback.message.edit_text("Меню матпомощи", reply_markup=user.user_material_help_menu_kb)
 
 
-@user_general_router.message(Command("reg"))
-async def cmd_menu(message: Message):
-    await message.answer("Вы уже зарегистрированы! Можете перейти в /menu")
-
-
 def setup(*, dispatcher: Dispatcher):
     user_general_router.message.middleware(IsRegisteredMiddleware())
     dispatcher.include_router(user_general_router)

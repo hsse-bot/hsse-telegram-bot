@@ -202,7 +202,7 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
                 except Exception as error:
                     raise UserManagingServiceError(
                         f'Response with status {response.status} has no json.\n Error:"{error}"')
-                return data['is banned']
+                return data['isBanned']
 
     async def unban_user(self, tg_id: int) -> NoReturn:
         if DEBUG_MODE:

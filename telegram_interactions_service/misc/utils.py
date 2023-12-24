@@ -2,7 +2,7 @@ from .dataclasses import User
 
 
 def generate_user_profile_text(user: User) -> str:
-    if user.student_info is not None:
+    if user.student_info is not None and user.student_info.isMale is not None:
         sex = 'мужской' if user.student_info.isMale else 'женский'
     else:
         sex = "-"
@@ -13,6 +13,6 @@ def generate_user_profile_text(user: User) -> str:
         Телеграм id: {user.tg_id}
         Очки активизма: {user.score}
         Пол: {sex}
-        Группа: {user.student_info.groupNumber if user.student_info is not None else "-"}
-        Номер комнаты: {user.student_info.roomNumber if user.student_info is not None else "-"}
+        Группа: {user.student_info.groupNumber if user.student_info is not None and user.student_info.groupNumber is not None else "-"}
+        Номер комнаты: {user.student_info.roomNumber if user.student_info is not None and user.student_info.roomNumber is not None else "-"}
     '''

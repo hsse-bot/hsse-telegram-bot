@@ -15,7 +15,19 @@ from telegram_interactions_service.states.registration_states import Registratio
 from telegram_interactions_service.keyboards.inline import user
 
 registration_router = Router()
+command_reg_router = Router()
 logger = logging.getLogger(__name__)
+
+
+@command_reg_router.message(Command("reg"))
+async def cmd_reg(message: Message, state: FSMContext) -> NoReturn:
+    if await state.get_state() is not None:
+        await state.clear()
+    if await UserManagingServiceInteraction().get_user(message.from_user.id) is not None:
+        await message.answer("Вы уже зарегистрированы! Можете перейти в /menu")
+        return
+    await state.set_state(RegistrationForm.name)
+    await message.answer("Привет! Введите ваше имя:", reply_markup=user.cancel_registration_kb())
 
 
 @registration_router.callback_query(user.RegistrationKb.filter(F.action == "/cancel"))
@@ -28,15 +40,6 @@ async def call_cancel(callback: CallbackQuery, state: FSMContext) -> NoReturn:
     await state.clear()
     await callback.message.edit_text("Регистрация прервана!")
     await callback.answer()
-
-
-@registration_router.message(Command("reg"))
-async def cmd_reg(message: Message, state: FSMContext) -> NoReturn:
-    current_state = await state.get_state()
-    if current_state is not None:
-        await state.clear()
-    await message.answer("Привет! Введите ваше имя:", reply_markup=user.cancel_registration_kb())
-    await state.set_state(RegistrationForm.name)
 
 
 @registration_router.message(RegistrationForm.name)
@@ -125,5 +128,6 @@ async def mock_unregistered_message_handler(message: Message) -> NoReturn:
 
 
 def setup(*, dispatcher: Dispatcher):
+    dispatcher.include_router(command_reg_router)
     registration_router.message.middleware(IsUnregisteredMiddleware())
     dispatcher.include_router(registration_router)

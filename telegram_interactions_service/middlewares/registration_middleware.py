@@ -10,7 +10,9 @@ class IsUnregisteredMiddleware(BaseMiddleware):
         user_tg_id = event.from_user.id
         user_managing_service = UserManagingServiceInteraction()
         is_banned = await user_managing_service.is_banned(user_tg_id)
-        if await user_managing_service.get_user(user_tg_id) is None and not is_banned:
+        if is_banned:
+            return
+        if await user_managing_service.get_user(user_tg_id) is None:
             return await handler(event, data)
         # await event.answer("Вы уже зарегистрированы!")
 
@@ -21,6 +23,8 @@ class IsRegisteredMiddleware(BaseMiddleware):
         user_tg_id = event.from_user.id
         user_managing_service = UserManagingServiceInteraction()
         is_banned = await user_managing_service.is_banned(user_tg_id)
-        if await user_managing_service.get_user(user_tg_id) is not None and not is_banned:
+        if is_banned:
+            return
+        if await user_managing_service.get_user(user_tg_id) is not None:
             return await handler(event, data)
         await event.answer("Зарегистрируйтесь! /reg")
