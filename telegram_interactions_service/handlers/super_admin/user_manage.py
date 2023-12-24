@@ -65,10 +65,6 @@ async def receive_delete_user_id(message: Message, state: FSMContext):
     if not user_id.isdigit():
         await message.answer("Вы ввели не id!", reply_markup=super_admin.super_user_return_user_manage_menu_kb())
         return
-    if int(user_id) == SUPER_ADMIN_TG_ID or int(user_id) == message.from_user.id:
-        await message.answer("Вы не можете удалить такого пользователя!",
-                             reply_markup=super_admin.super_user_return_user_manage_menu_kb())
-        return
     try:
         await UserManagingServiceInteraction().delete_user(int(user_id))
     except Exception as error:
