@@ -16,4 +16,15 @@ def admin_main_kb() -> InlineKeyboardMarkup:
                                callback_data=AdminMainMenuKb(action="/notify_service").pack())],
         width=2
     )
+    builder.row(
+        InlineKeyboardButton(text="Пользователи", callback_data=AdminMainMenuKb(action="/get_users").pack())
+    )
+    return builder.as_markup()
+
+
+def return_main_menu() -> InlineKeyboardMarkup:
+    builder = InlineKeyboardBuilder()
+    builder.row(
+        InlineKeyboardButton(text="Назад", callback_data=AdminMainMenuKb(action="/").pack())
+    )
     return builder.as_markup()

@@ -27,6 +27,9 @@ def super_admin_main_kb() -> InlineKeyboardMarkup:
     builder.row(
         InlineKeyboardButton(text="Создать админа", callback_data=SuperAdminMainMenuKb(action="/create_admin").pack())
     )
+    builder.row(
+        InlineKeyboardButton(text="Пользователи", callback_data=SuperAdminMainMenuKb(action="/users").pack())
+    )
     return builder.as_markup()
 
 
