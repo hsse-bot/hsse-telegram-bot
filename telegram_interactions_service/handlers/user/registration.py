@@ -15,11 +15,19 @@ from telegram_interactions_service.states.registration_states import Registratio
 from telegram_interactions_service.keyboards.inline import user
 
 registration_router = Router()
-command_reg_router = Router()
+no_middleware_router = Router()
 logger = logging.getLogger(__name__)
 
 
-@command_reg_router.message(Command("reg"))
+@no_middleware_router.message(Command("start"))
+async def cmd_start(message: Message):
+    if await UserManagingServiceInteraction().get_user(message.from_user.id) is None:
+        await message.answer(message_templates.start_unreg_message)
+    else:
+        await message.answer(message_templates.start_reg_message)
+
+
+@no_middleware_router.message(Command("reg"))
 async def cmd_reg(message: Message, state: FSMContext) -> NoReturn:
     if await state.get_state() is not None:
         await state.clear()
@@ -128,6 +136,6 @@ async def mock_unregistered_message_handler(message: Message) -> NoReturn:
 
 
 def setup(*, dispatcher: Dispatcher):
-    dispatcher.include_router(command_reg_router)
+    dispatcher.include_router(no_middleware_router)
     registration_router.message.middleware(IsUnregisteredMiddleware())
     dispatcher.include_router(registration_router)
