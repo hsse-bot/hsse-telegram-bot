@@ -27,7 +27,6 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
 
     async def get_user(self, tg_id: int) -> User | None:
         if DEBUG_MODE:
-            return
             role = Role(id=1, name=constants.USER_ROLE_NAME)
             student_info = generate_student_info({"roomNumber": 411, "isMale": True, "groupNumber": "Б13-303"})
             return User(name='Тестировщик', surname='Тестов', tg_id=12345678, role=role,

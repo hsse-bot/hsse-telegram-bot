@@ -12,5 +12,6 @@ class IsAdminMiddleware(BaseMiddleware):
                        event: Message, data: Dict[str, Any]) -> Any:
         user_tg_id = event.from_user.id
         user_managing_service = UserManagingServiceInteraction()
-        if await user_managing_service.is_admin(user_tg_id) or user_tg_id == SUPER_ADMIN_TG_ID:
+        is_banned = await user_managing_service.is_banned(user_tg_id)
+        if await user_managing_service.is_admin(user_tg_id) or user_tg_id == SUPER_ADMIN_TG_ID and not is_banned:
             return await handler(event, data)
