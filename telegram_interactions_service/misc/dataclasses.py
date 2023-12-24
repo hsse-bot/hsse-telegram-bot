@@ -27,10 +27,11 @@ def generate_student_info(data: dict) -> StudentInfo:
 class User(BaseModel):
     name: str
     surname: str
+    email: str
     tg_id: int
     role: Role
     score: int
-    student_info: StudentInfo
+    student_info: StudentInfo | None
 
 
 class Form(BaseModel):

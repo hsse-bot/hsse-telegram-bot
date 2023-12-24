@@ -30,7 +30,7 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
             role = Role(id=1, name=constants.USER_ROLE_NAME)
             student_info = generate_student_info({"roomNumber": 411, "isMale": True, "groupNumber": "Б13-303"})
             return User(name='Тестировщик', surname='Тестов', tg_id=12345678, role=role,
-                        score='100', student_info=student_info)
+                        score='100', student_info=student_info, email="test@phystech_edu")
         async with aiohttp.ClientSession() as session:
             async with session.get(user_service_api_url + 'get-user', params={'tgId': tg_id}) as response:
                 if response.status == 400:
@@ -40,11 +40,14 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
                 data = await response.json()
                 try:
                     role = Role(id=data['role']['id'], name=data['role']['name'])
-                    student_info = generate_student_info(data['studentInfo'])
+                    if 'studentInfo' in data:
+                        student_info = generate_student_info(data['studentInfo'])
+                    else:
+                        student_info = None
                     return User(name=data['name'], surname=data['surname'], tg_id=data['tgId'], role=role,
-                                score=data['score'], student_info=student_info)
-                except KeyError:
-                    raise UserManagingServiceError(f'bad data: {data}')
+                                score=data['score'], student_info=student_info, email=data['email'])
+                except KeyError as error:
+                    raise UserManagingServiceError(f'bad data: {data}\nError{error}')
 
     async def get_all_users(self) -> List[User]:
         if DEBUG_MODE:
@@ -53,25 +56,25 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
             student_info2 = generate_student_info({"roomNumber": 110, "isMale": True, "groupNumber": "Б13-303"})
             return [
                 User(name='Тестировщик', surname='Тестов', tg_id=12345678, role=user_role,
-                     score='100', student_info=student_info1),
+                     score='100', student_info=student_info1, email="test@phystech_edu"),
 
                 User(name='Друг', surname='Тестировщика', tg_id=99999999, role=user_role,
-                     score='50', student_info=student_info2),
+                     score='50', student_info=student_info2, email="test@phystech_edu"),
 
                 User(name='Друг', surname='Тестировщика', tg_id=99999999, role=user_role,
-                     score='0', student_info=student_info2),
+                     score='0', student_info=student_info2, email="test@phystech_edu"),
 
                 User(name='Друг', surname='Тестировщика', tg_id=99999999, role=user_role,
-                     score='120', student_info=student_info2),
+                     score='120', student_info=student_info2, email="test@phystech_edu"),
 
                 User(name='Друг', surname='Тестировщика', tg_id=99999999, role=user_role,
-                     score='10', student_info=student_info2),
+                     score='10', student_info=student_info2, email="test@phystech_edu"),
 
                 User(name='Друг', surname='Тестировщика', tg_id=99999999, role=user_role,
-                     score='-10', student_info=student_info2),
+                     score='-10', student_info=student_info2, email="test@phystech_edu"),
 
                 User(name='Александр', surname='Тюленев', tg_id=66666666, role=user_role,
-                     score='2000', student_info=student_info2),
+                     score='2000', student_info=student_info2, email="test@phystech_edu"),
             ]
         async with aiohttp.ClientSession() as session:
             async with session.get(user_service_api_url + 'get-all-users') as response:
@@ -82,24 +85,27 @@ class UserManagingServiceInteraction(interactions_interfaces.UserManagingService
                 try:
                     for user_data in data:
                         role = Role(id=user_data['role']['id'], name=user_data['role']['name'])
-                        student_info = generate_student_info(user_data['studentInfo'])
+                        if 'studentInfo' in user_data:
+                            student_info = generate_student_info(user_data['studentInfo'])
+                        else:
+                            student_info = None
                         list_of_users.append(
                             User(name=user_data['name'], surname=user_data['surname'],
-                                 tg_id=user_data['tgId'], role=role,
+                                 tg_id=user_data['tgId'], role=role, email=user_data['email'],
                                  score=user_data['score'], student_info=student_info)
                         )
                     return list_of_users
-                except KeyError:
-                    raise UserManagingServiceError(f'bad data: {data}')
+                except KeyError as error:
+                    raise UserManagingServiceError(f'bad data: {data}\nError:{error}')
 
     async def add_user_to_database(self, user: RegistrationUserData) -> NoReturn:
         if DEBUG_MODE:
             return
-        user_role_id = self.get_role_id(role_name=constants.USER_ROLE_NAME)
+        user_role_id = await self.get_role_id(role_name=constants.USER_ROLE_NAME)
         async with aiohttp.ClientSession() as session:
             async with session.post(user_service_api_url + 'create-user',
                                     json={'tgId': user.tg_id, 'name': user.name, 'surname': user.surname,
-                                          'roleId': user_role_id}) as response:
+                                          'email': user.email_address, 'roleId': user_role_id}) as response:
                 if response.status == 400:
                     try:
                         data = await response.json()
