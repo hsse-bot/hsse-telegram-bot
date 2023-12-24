@@ -1,5 +1,5 @@
 
-name: "User Managing Service Build"
+name: "Users Managing Service Build"
 on: 
   push:
     branches: master
@@ -22,8 +22,8 @@ jobs:
       - name: Build and push to GHCR
         uses: docker/build-push-action@v5
         with:
-          context: ./user_managing_service
-          file: ./user_managing_service/TelegramNotifierService/Dockerfile
+          context: ./users_managing_service
+          file: ./users_managing_service/Dockerfile
           push: true
-          tags: ghcr.io/hsse-bot/user-managing-service:latest
+          tags: ghcr.io/hsse-bot/users-managing-service:latest
           
