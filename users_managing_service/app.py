@@ -121,7 +121,8 @@ def update_user():
             student_info_delta=None if "studentInfoDelta" not in json
             else StudentInfoDelta(
                 new_is_male=json["studentInfoDelta"].get("newIsMale"),
-                new_room_number=json["studentInfoDelta"].get("newRoomNumber")
+                new_room_number=json["studentInfoDelta"].get("newRoomNumber"),
+                new_group_number=json["studentInfoDelta"].get("newGroupNumber"),
             ),
             new_score=json.get("newScore"),
             delta_score=json.get("deltaScore")
