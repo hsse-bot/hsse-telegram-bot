@@ -1,2 +1,6 @@
-flask
-sqlalchemy
+SQLAlchemy~=2.0.23
+alembic~=1.13.1
+Flask~=3.0.0
+sqlalchemy-utils~=0.41.1
+pymysql~=1.1.0
+cryptography~=41.0.7
