@@ -5,7 +5,7 @@ class BanUserForm(StatesGroup):
     tg_id = State()
 
 
-class ClearUserForm(StatesGroup):
+class DeleteUserForm(StatesGroup):
     tg_id = State()
 
 
