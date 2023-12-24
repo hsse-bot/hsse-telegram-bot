@@ -12,7 +12,6 @@ from telegram_interactions_service.misc import dataclasses, message_templates, c
 from telegram_interactions_service.states.add_admin_states import AddAdminForm
 from telegram_interactions_service.services_interactions.user_managing_service import UserManagingServiceInteraction
 
-
 super_admin_manage_router = Router()
 logger = logging.getLogger(__name__)
 
@@ -133,6 +132,22 @@ async def receive_admin_tg_id(message: Message):
         await message.answer(message_templates.error_admin_text)
         return
     await message.answer("Вы успешно добавили админа!", reply_markup=super_admin.super_return_menu_kb())
+
+
+@super_admin_manage_router.callback_query(super_admin.AdminEditKb.filter(F.action.endswith("/delete")))
+async def call_delete_admin_handler(callback: CallbackQuery, callback_data: super_admin.AdminEditKb):
+    admin_id = callback_data.tg_id
+    try:
+        await UserManagingServiceInteraction().delete_user(admin_id)
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await callback.message.edit_text(message_templates.error_admin_text,
+                                         reply_markup=super_admin.super_return_menu_kb())
+        await callback.answer()
+        return
+    await callback.message.edit_text(f"Вы успешно удалили админа {admin_id}",
+                                     reply_markup=super_admin.super_return_menu_kb())
+    await callback.answer()
 
 
 def setup(*, dispatcher: Dispatcher):
