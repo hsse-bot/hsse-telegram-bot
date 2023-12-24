@@ -119,6 +119,11 @@ async def call_confirm_registration_data(callback: CallbackQuery, state: FSMCont
     await callback.answer()
 
 
+@registration_router.message()
+async def mock_unregistered_message_handler(message: Message) -> NoReturn:
+    await message.answer("Вы не зарегистрированы. Для продолжения работы с ботом нажмите /reg")
+
+
 def setup(*, dispatcher: Dispatcher):
     registration_router.message.middleware(IsUnregisteredMiddleware())
     dispatcher.include_router(registration_router)

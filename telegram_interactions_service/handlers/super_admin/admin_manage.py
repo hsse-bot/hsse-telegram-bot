@@ -9,6 +9,7 @@ from telegram_interactions_service.config import SUPER_ADMIN_TG_ID
 from telegram_interactions_service.keyboards.inline import super_admin
 from telegram_interactions_service.middlewares import IsSuperAdminMiddleware
 from telegram_interactions_service.misc import dataclasses, message_templates, constants
+from telegram_interactions_service.misc.constants import SUPER_ADMIN_MENU_COMMAND
 from telegram_interactions_service.states.add_admin_states import AddAdminForm
 from telegram_interactions_service.services_interactions.user_managing_service import UserManagingServiceInteraction
 
@@ -17,7 +18,7 @@ super_admin_manage_router = Router()
 logger = logging.getLogger(__name__)
 
 
-@super_admin_manage_router.message(Command("super_admin"))
+@super_admin_manage_router.message(Command(SUPER_ADMIN_MENU_COMMAND))
 async def super_admin_menu_cmd(message: Message, state: FSMContext):
     if await state.get_state() is not None:
         await state.clear()

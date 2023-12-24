@@ -11,7 +11,7 @@ class IsUnregisteredMiddleware(BaseMiddleware):
         user_managing_service = UserManagingServiceInteraction()
         if await user_managing_service.get_user(user_tg_id) is None:
             return await handler(event, data)
-        await event.answer("Вы уже зарегистрированы!")
+        # await event.answer("Вы уже зарегистрированы!")
 
 
 class IsRegisteredMiddleware(BaseMiddleware):

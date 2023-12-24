@@ -5,9 +5,9 @@ from typing import NoReturn
 
 
 def setup(*, dispatcher: Dispatcher, web_app: Application) -> NoReturn:
-    user.setup(dispatcher=dispatcher)
-    admin.setup(dispatcher=dispatcher)
     super_admin.setup(dispatcher=dispatcher)
+    admin.setup(dispatcher=dispatcher)
+    user.setup(dispatcher=dispatcher)
     hooks.setup(dispatcher=dispatcher)
     web.setup(web_app=web_app)
 

@@ -12,6 +12,10 @@ USER_ROLE_NAME: Final[str] = "user"
 ADMIN_ROLE_NAME: Final[str] = "admin"
 SUPER_ADMIN_ROLE_NAME: Final[str] = "super_admin"
 
+USER_MENU_COMMAND: Final[str] = "menu"
+ADMIN_MENU_COMMAND: Final[str] = "menu_admin"
+SUPER_ADMIN_MENU_COMMAND: Final[str] = "super_admin"
+
 all_student_info_fields = [
     StudentInfoField("roomNumber", "номер комнаты"),
     StudentInfoField("isMale", "пол"),

@@ -5,11 +5,12 @@ from aiogram import Router
 
 from telegram_interactions_service.middlewares import IsAdminMiddleware
 from telegram_interactions_service.keyboards.inline import admin
+from telegram_interactions_service.misc.constants import ADMIN_MENU_COMMAND
 
 admin_general_router = Router()
 
 
-@admin_general_router.message(Command("menu_admin"))
+@admin_general_router.message(Command(ADMIN_MENU_COMMAND))
 async def cmd_menu(message: Message):
     await message.answer("Админ панель", reply_markup=admin.admin_main_kb())
 
