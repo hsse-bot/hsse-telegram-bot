@@ -105,7 +105,7 @@ def get_all_users():
     for user in users:
         users_dict.append(user.to_dict())
 
-    return jsonify(users), 200
+    return jsonify(users_dict), 200
 
 
 @app.put("/update-user")
