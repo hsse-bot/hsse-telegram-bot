@@ -1,6 +1,7 @@
-FROM python:3.9
-WORKDIR /backend
-COPY requirements.txt /backend
-RUN pip3 install --upgrade pip -r requirements.txt
-COPY . /backend
+FROM python:3-alpine
+WORKDIR /app
+COPY requirements.txt ./
+RUN pip install -r requirements.txt
+COPY . .
 EXPOSE 5000
+CMD [ "flask", "run","--host","0.0.0.0","--port","5000"]
