@@ -2,6 +2,9 @@ from dotenv import load_dotenv
 import os
 
 load_dotenv()
+
+DEBUG_MODE = os.getenv("DEBUG_MODE").lower() == 'true'
+
 TOKEN_API = os.getenv("TG_TOKEN")
 TUNNEL_URL = os.getenv("TUNNEL_URL")
 WEB_APP_HOST = os.getenv("WEB_APP_HOST")
@@ -13,3 +16,8 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 
 REDIS_HOST = os.getenv("REDIS_HOST")
 REDIS_PORT = os.getenv("REDIS_PORT")
+
+TELEGRAM_NOTIFIER_SERVICE_API_HOST = os.getenv("TELEGRAM_NOTIFIER_SERVICE_API_HOST")
+USER_MANAGING_SERVICE_API_HOST = os.getenv("USER_MANAGING_SERVICE_API_HOST")
+MATERIAL_HELPING_SERVICE_API_HOST = os.getenv("MATERIAL_HELPING_SERVICE_API_HOST")
+SUPER_ADMIN_TG_ID = int(os.getenv("SUPER_ADMIN_TG_ID"))
