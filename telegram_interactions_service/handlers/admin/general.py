@@ -45,8 +45,8 @@ async def call_notify_service_menu(callback: CallbackQuery):
 async def call_get_users(callback: CallbackQuery):
     try:
         all_users = await UserManagingServiceInteraction().get_all_users()
-        result = '\n'.join([f"{user.name} {user.surname} {user.tg_id} {user.score}" for user in all_users])
-        await callback.message.edit_text(text="Имя Фамилия Telegram id Очки\n" + result,
+        result = '\n'.join([f"{user.name} {user.surname} {user.email} {user.score}" for user in all_users])
+        await callback.message.edit_text(text="Имя Фамилия Почта Очки\n" + result,
                                          reply_markup=admin.return_main_menu())
     except Exception as error:
         logger.log(level=logging.ERROR, msg=error, exc_info=True)
