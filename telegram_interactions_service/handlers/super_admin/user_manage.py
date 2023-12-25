@@ -24,6 +24,20 @@ async def call_user_manage_manu(callback: CallbackQuery, state: FSMContext):
                                      reply_markup=super_admin.super_user_manage_menu_kb())
 
 
+@super_user_manage_router.callback_query(super_admin.UsersKb.filter(F.action == "/get_users"))
+async def call_get_users(callback: CallbackQuery):
+    try:
+        all_users = await UserManagingServiceInteraction().get_all_users()
+        result = '\n'.join([f"{user.name} {user.surname} {user.tg_id} {user.score}" for user in all_users])
+        await callback.message.edit_text(text="Имя Фамилия Telegram id Очки\n" + result,
+                                         reply_markup=super_admin.super_user_manage_cancel_action())
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await callback.message.edit_text(message_templates.error_admin_text,
+                                         reply_markup=super_admin.super_user_return_user_manage_menu_kb())
+        await callback.answer()
+
+
 @super_user_manage_router.callback_query(super_admin.UsersKb.filter(F.action == "/ban_user"))
 async def call_ban_user(callback: CallbackQuery, state: FSMContext):
     await state.set_state(BanUserForm.tg_id)

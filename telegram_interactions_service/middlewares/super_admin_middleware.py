@@ -1,6 +1,8 @@
+from typing import Any, Awaitable, Callable, Dict, NoReturn
+
 from aiogram import BaseMiddleware
 from aiogram.types import Message
-from typing import Any, Awaitable, Callable, Dict, NoReturn
+
 from ..config import SUPER_ADMIN_TG_ID
 
 

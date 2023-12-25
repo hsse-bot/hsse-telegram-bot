@@ -1,3 +1,5 @@
+import logging
+
 from aiogram import F, Dispatcher
 from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
@@ -12,11 +14,17 @@ from telegram_interactions_service.config import SUPER_ADMIN_TG_ID
 
 
 user_general_router = Router()
+logger = logging.getLogger(__name__)
 
 
 @user_general_router.message(Command("help"))
 async def cmd_help(message: Message):
-    user_role = (await UserManagingServiceInteraction().get_user(message.from_user.id)).role
+    try:
+        user_role = (await UserManagingServiceInteraction().get_user(message.from_user.id)).role
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await message.answer(message_templates.error_user_text, reply_markup=user.error_kb())
+        return
     if message.from_user.id == SUPER_ADMIN_TG_ID:
         await message.answer('Какая тебе помощь, супер админ, ты тут главный! Тебе только Бог поможет',
                              reply_markup=reply.super_admin_reply_kb())
