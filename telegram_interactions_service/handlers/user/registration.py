@@ -21,18 +21,28 @@ logger = logging.getLogger(__name__)
 
 @no_middleware_router.message(Command("start"))
 async def cmd_start(message: Message):
-    if await UserManagingServiceInteraction().get_user(message.from_user.id) is None:
-        await message.answer(message_templates.start_unreg_message)
-    else:
-        await message.answer(message_templates.start_reg_message)
+    try:
+        if await UserManagingServiceInteraction().get_user(message.from_user.id) is None:
+            await message.answer(message_templates.start_unreg_message)
+        else:
+            await message.answer(message_templates.start_reg_message)
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await message.answer(message_templates.error_user_text)
+        return
 
 
 @no_middleware_router.message(Command("reg"))
 async def cmd_reg(message: Message, state: FSMContext) -> NoReturn:
     if await state.get_state() is not None:
         await state.clear()
-    if await UserManagingServiceInteraction().get_user(message.from_user.id) is not None:
-        await message.answer("Вы уже зарегистрированы! Можете перейти в /menu")
+    try:
+        if await UserManagingServiceInteraction().get_user(message.from_user.id) is not None:
+            await message.answer("Вы уже зарегистрированы! Можете перейти в /menu")
+            return
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await message.answer(message_templates.error_user_text)
         return
     await state.set_state(RegistrationForm.name)
     await message.answer("Привет! Введите ваше имя:", reply_markup=user.cancel_registration_kb())

@@ -34,7 +34,13 @@ async def call_super_admin_menu(callback: CallbackQuery, state: FSMContext):
 
 @super_admin_manage_router.callback_query(super_admin.SuperAdminMainMenuKb.filter(F.action == "/admins"))
 async def call_admins(callback: CallbackQuery):
-    admins = await UserManagingServiceInteraction().get_admins()
+    try:
+        admins = await UserManagingServiceInteraction().get_admins()
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await callback.message.edit_text(message_templates.error_admin_text,
+                                         reply_markup=super_admin.super_admin_main_kb())
+        return
     if len(admins) == 0:
         await callback.message.edit_text(f"Пока что нет админов",
                                          reply_markup=super_admin.super_return_menu_kb())
@@ -132,7 +138,7 @@ async def receive_admin_tg_id(message: Message):
         await user_managing_service.set_user_admin_role(new_admin.tg_id)
     except Exception as error:
         logger.log(level=logging.ERROR, msg=error, exc_info=True)
-        await message.answer(message_templates.error_admin_text)
+        await message.answer(message_templates.error_admin_text, reply_markup=super_admin.super_admin_main_kb())
         return
     await message.answer("Вы успешно добавили админа!", reply_markup=super_admin.super_return_menu_kb())
 

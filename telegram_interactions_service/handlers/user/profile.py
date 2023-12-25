@@ -25,7 +25,13 @@ logger = logging.getLogger(__name__)
 async def rating_handler(callback: CallbackQuery, callback_data: user.ProfileChangeDataKb, state: FSMContext):
     if await state.get_state() is not None:
         await state.clear()
-    user_data = await UserManagingServiceInteraction().get_user(callback.from_user.id)
+    try:
+        user_data = await UserManagingServiceInteraction().get_user(callback.from_user.id)
+    except Exception as error:
+        logger.log(level=logging.ERROR, msg=error, exc_info=True)
+        await callback.message.edit_text(message_templates.error_user_text, reply_markup=user.error_kb())
+        await callback.answer()
+        return
     await callback.message.edit_text('Ваш профиль\n' + generate_user_profile_text(user_data),
                                      reply_markup=user.profile_menu_kb())
     await callback.answer()
@@ -112,15 +118,10 @@ async def change_field_handler(message: Message, state: FSMContext):
         if state_data['field_db_name'] == 'groupNumber':
             dataclasses.StudentInfoDelta.validate_group(state_data['new_value'])
         student_info_delta = dataclasses.generate_delta_student_info({state_data['field_db_name']: state_data['new_value']})
-        # student_info_delta.validate({state_data['field_db_name']: state_data['new_value']})
     except (ValidationError, BadRegistrationInput) as error:
         await message.answer(f"Неверный формат ввода.",
                              reply_markup=user.return_to_profile_kb())
         return
-    # except Exception:
-    #     await message.answer(message_templates.error_fail_to_change_field,
-    #                          reply_markup=user.error_kb())
-    #     return
     try:
         user_delta = dataclasses.UserDelta()
         user_delta.studentInfoDelta = student_info_delta
