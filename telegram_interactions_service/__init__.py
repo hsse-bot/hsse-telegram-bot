@@ -1,3 +1,5 @@
+import logging
+
 from aiohttp import web
 from telegram_interactions_service import config
 from urllib.parse import urlparse
@@ -15,6 +17,9 @@ from aioredis import Redis
 
 def start() -> NoReturn:
     bot = Bot(token=config.TOKEN_API, parse_mode=ParseMode.HTML)
+
+    log_format = f"%(asctime)s-[%(levelname)s]-%(name)s-%(funcName)s(%(lineno)d)-%(message)s"
+    logging.basicConfig(level=logging.DEBUG, filename="debug_logs.log", filemode="w", format=log_format)
 
     storage = RedisStorage(
         redis=Redis(host=config.REDIS_HOST, port=config.REDIS_PORT),
