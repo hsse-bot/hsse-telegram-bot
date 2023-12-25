@@ -29,13 +29,14 @@ def super_user_return_user_manage_menu_kb() -> InlineKeyboardMarkup:
 def super_user_manage_menu_kb() -> InlineKeyboardMarkup:
     builder = InlineKeyboardBuilder()
     builder.row(
-        InlineKeyboardButton(text="Забанить пользователя", callback_data=UsersKb(action="/ban_user").pack())
+        InlineKeyboardButton(text="Список", callback_data=UsersKb(action="/get_users").pack()),
+        InlineKeyboardButton(text="Удалить", callback_data=UsersKb(action="/delete_user").pack()),
+        width=2
     )
     builder.row(
-        InlineKeyboardButton(text="Удалить пользователя", callback_data=UsersKb(action="/delete_user").pack())
-    )
-    builder.row(
-        InlineKeyboardButton(text="Разбанить пользователя", callback_data=UsersKb(action="/unban_user").pack())
+        InlineKeyboardButton(text="Забанить", callback_data=UsersKb(action="/ban_user").pack()),
+        InlineKeyboardButton(text="Разбанить", callback_data=UsersKb(action="/unban_user").pack()),
+        width=2
     )
     builder.row(
         InlineKeyboardButton(text="Назад", callback_data=SuperAdminMainMenuKb(action="/").pack())
