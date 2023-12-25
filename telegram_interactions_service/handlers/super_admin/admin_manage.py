@@ -146,7 +146,7 @@ async def receive_admin_tg_id(message: Message):
 async def call_delete_admin_handler(callback: CallbackQuery, callback_data: super_admin.AdminEditKb):
     admin_id = callback_data.tg_id
     try:
-        await UserManagingServiceInteraction().delete_user(admin_id)
+        await UserManagingServiceInteraction().set_user_user_role(admin_id)
     except Exception as error:
         logger.log(level=logging.ERROR, msg=error, exc_info=True)
         await callback.message.edit_text(message_templates.error_admin_text,
